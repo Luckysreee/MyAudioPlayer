@@ -1,0 +1,14 @@
+{
+    "title": "Reproductor de Audio",
+    "selectFiles": "Seleccionar Archivos de Audio",
+    "noFileSelected": "Ningún archivo seleccionado",
+    "playing": "Reproduciendo",
+    "paused": "Pausado",
+    "stopped": "Detenido",
+    "volume": "Volumen",
+    "accessibilityMode": "Modo de Accesibilidad",
+    "playlist": "Lista de Reproducción",
+    "dragDropText": "Arrastra y suelta archivos de audio aquí o haz clic para seleccionar",
+    "unknownArtist": "Artista Desconocido",
+    "unknownTitle": "Título Desconocido"
+}

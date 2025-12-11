@@ -1,0 +1,14 @@
+{
+    "title": "Kicheza Sauti",
+    "selectFiles": "Chagua Faili za Sauti",
+    "noFileSelected": "Hakuna faili iliyochaguliwa",
+    "playing": "Inacheza",
+    "paused": "Imesimamishwa",
+    "stopped": "Imesitishwa",
+    "volume": "Sauti",
+    "accessibilityMode": "Hali ya Ufikiaji",
+    "playlist": "Orodha ya Nyimbo",
+    "dragDropText": "Buruta na uweke faili za sauti hapa au bonyeza kuchagua",
+    "unknownArtist": "Msanii Hajulikani",
+    "unknownTitle": "Kichwa Hakijulikani"
+}
