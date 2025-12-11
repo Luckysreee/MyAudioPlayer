@@ -1,0 +1,14 @@
+{
+    "title": "Audio Player",
+    "selectFiles": "Select Audio Files",
+    "noFileSelected": "No file selected",
+    "playing": "Playing",
+    "paused": "Paused",
+    "stopped": "Stopped",
+    "volume": "Volume",
+    "accessibilityMode": "Accessibility Mode",
+    "playlist": "Playlist",
+    "dragDropText": "Drag & Drop audio files here or click to select",
+    "unknownArtist": "Unknown Artist",
+    "unknownTitle": "Unknown Title"
+}
