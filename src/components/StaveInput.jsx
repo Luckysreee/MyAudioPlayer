@@ -160,8 +160,8 @@ const StaveInput = ({ melody, setMelody, translations }) => {
         const newNote = {
             note: n,
             accidental: acc,
-            octave: 4,
-            duration: 0.5,
+            octave: parseInt(octave),
+            duration: parseFloat(duration),
             id: Date.now() + Math.random()
         };
         setMelody([...melody, newNote]);
@@ -188,7 +188,38 @@ const StaveInput = ({ melody, setMelody, translations }) => {
             {/* INPUT AREAS */}
             <div className="input-area" style={{ minHeight: '180px' }}>
                 {inputMode === 'piano' && (
-                    <Piano onKeyClick={handlePianoClick} octave={4} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {/* Piano Settings Controls */}
+                        <div className="flex-center gap-md" style={{ background: 'rgba(0,0,0,0.2)', padding: '0.75rem', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Octave:</label>
+                                <select
+                                    value={octave}
+                                    onChange={e => setOctave(e.target.value)}
+                                    className="no-drag"
+                                    style={{ width: '70px', padding: '0.4em' }}
+                                >
+                                    {[1, 2, 3, 4, 5, 6, 7, 8].map(o => <option key={o} value={o}>{o}</option>)}
+                                </select>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Duration:</label>
+                                <select
+                                    value={duration}
+                                    onChange={e => setDuration(e.target.value)}
+                                    className="no-drag"
+                                    style={{ width: '90px', padding: '0.4em' }}
+                                >
+                                    <option value="0.25">0.25s</option>
+                                    <option value="0.5">0.5s</option>
+                                    <option value="0.75">0.75s</option>
+                                    <option value="1">1s</option>
+                                    <option value="2">2s</option>
+                                </select>
+                            </div>
+                        </div>
+                        <Piano onKeyClick={handlePianoClick} octave={parseInt(octave)} />
+                    </div>
                 )}
 
                 {inputMode === 'text' && (
