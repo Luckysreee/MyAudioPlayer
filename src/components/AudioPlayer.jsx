@@ -354,11 +354,27 @@ const AudioPlayer = ({
 
     const renderStaveMode = () => (
         <>
-            {/* Card 1: Controls & Visualizer (Top Center-Left) */}
+            {/* Card 1: Stave Input (Top Center-Left) */}
+            <DraggableCard
+                title={translations.staveInput}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: '40%', height: '350px' }}
+                className="stave-editor-card"
+            >
+                <StaveInput
+                    melody={melody}
+                    setMelody={setMelody}
+                    onPlay={playMelody}
+                    isPlaying={isStavePlaying}
+                    translations={translations}
+                />
+            </DraggableCard>
+
+            {/* Card 2: Controls & Visualizer (Bottom Center-Left) */}
             <DraggableCard
                 title={translations.controls || "Controls"}
-                initialPos={{ x: '16px', y: '16px' }}
-                initialSize={{ width: '40%', height: '250px' }}
+                initialPos={{ x: '16px', y: '382px' }}
+                initialSize={{ width: '40%', height: 'calc(100% - 392px)' }}
                 className="stave-controls-card"
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '120px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -369,22 +385,6 @@ const AudioPlayer = ({
                     isPlaying={isStavePlaying}
                     onClear={() => setMelody([])}
                     melody={melody}
-                    translations={translations}
-                />
-            </DraggableCard>
-
-            {/* Card 2: Editor (Bottom Center-Left) */}
-            <DraggableCard
-                title={translations.staveInput}
-                initialPos={{ x: '16px', y: '282px' }}
-                initialSize={{ width: '40%', height: 'calc(100% - 292px)' }}
-                className="stave-editor-card"
-            >
-                <StaveInput
-                    melody={melody}
-                    setMelody={setMelody}
-                    onPlay={playMelody}
-                    isPlaying={isStavePlaying}
                     translations={translations}
                 />
             </DraggableCard>
