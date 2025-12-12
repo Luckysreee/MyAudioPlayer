@@ -71,6 +71,19 @@ function App() {
 
     const handleClearAll = () => { setFiles([]); setCurrentFileIndex(-1); };
 
+    const handleReorder = (newFiles) => {
+        setFiles(prev => {
+            const playingFile = currentFileIndex !== -1 ? prev[currentFileIndex] : null;
+            if (playingFile) {
+                const newIndex = newFiles.findIndex(f => f === playingFile);
+                if (newIndex !== -1 && newIndex !== currentFileIndex) {
+                    setCurrentFileIndex(newIndex);
+                }
+            }
+            return newFiles;
+        });
+    };
+
     // Layout: Header -> Content -> Footer
     return (
         <>
