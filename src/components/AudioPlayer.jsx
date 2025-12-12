@@ -392,8 +392,8 @@ const AudioPlayer = ({
             {/* Card 3: Melody Table (Right Sidebar) */}
             <DraggableCard
                 title={translations.melody || "Melody"}
-                initialPos={{ x: 'calc(100% - 420px)', y: '16px' }}
-                initialSize={{ width: '400px', height: 'calc(100% - 26px)' }}
+                initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
+                initialSize={{ width: '450px', height: 'calc(100% - 26px)' }}
                 className="stave-table-card"
             >
                 <MelodyTable
