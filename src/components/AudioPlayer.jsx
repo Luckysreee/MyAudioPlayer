@@ -419,7 +419,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.controls || "Controls"}
                 initialPos={{ x: '512px', y: '16px' }}
-                initialSize={{ width: '530px', height: '480px' }}
+                initialSize={{ width: '532px', height: '480px' }}
                 className="stave-visualizer-controls-card"
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '60%', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

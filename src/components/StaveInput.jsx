@@ -3,10 +3,10 @@ import Piano from './Piano';
 
 // 1. STAVE CONTROLS (Play/Stop/Clear + Visualizer placeholder if we moved it here, but Visualizer is in parent)
 export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations, volume, onVolumeChange }) => (
-    <div className="flex-center gap-md" style={{ width: '100%', padding: '1rem', flexDirection: 'column' }}>
+    <div style={{ width: '100%', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', boxSizing: 'border-box' }}>
         <button
             onClick={onPlay}
-            className="btn-primary"
+            className="btn-primary no-drag"
             disabled={melody.length === 0}
             style={{
                 width: '100%',
@@ -16,13 +16,14 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
                 background: isPlaying ? 'var(--error-color)' : 'var(--surface-color)',
                 borderColor: isPlaying ? 'var(--error-color)' : 'var(--primary-color)',
                 color: isPlaying ? '#fff' : 'var(--primary-color)',
-                boxShadow: isPlaying ? 'none' : '0 0 10px rgba(0,0,0,0.2)'
+                boxShadow: isPlaying ? 'none' : '0 0 10px rgba(0,0,0,0.2)',
+                boxSizing: 'border-box'
             }}
         >
             {isPlaying ? "⏹ Stop" : "▶ Play Melody"}
         </button>
 
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxSizing: 'border-box' }}>
             <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Volume: {Math.round(volume * 100)}%</label>
             <input
                 type="range"
@@ -32,15 +33,15 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
                 value={volume}
                 onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
                 className="no-drag"
-                style={{ width: '100%' }}
+                style={{ width: '100%', boxSizing: 'border-box' }}
             />
         </div>
 
         <button
             onClick={onClear}
             disabled={melody.length === 0}
-            className="btn-secondary"
-            style={{ height: '45px', whiteSpace: 'nowrap', width: '100%' }}
+            className="btn-secondary no-drag"
+            style={{ height: '45px', whiteSpace: 'nowrap', width: '100%', boxSizing: 'border-box' }}
         >
             {translations.clearAll || "Clear"}
         </button>
