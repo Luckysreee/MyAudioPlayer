@@ -98,56 +98,52 @@ const AudioPlayer = ({
 
     // STAVE LOGIC
     const playMelody = () => {
-        if (!audioContextRef.current || melody.length === 0) return;
-
         if (isStavePlaying) {
-            // Stop functionality if needed, for now just reset
+            // Stop playback
             setIsStavePlaying(false);
+            if (oscillatorRef.current) {
+                oscillatorRef.current.stop();
+                oscillatorRef.current = null;
+            }
             return;
         }
 
+        if (!melody.length || !gainNodeRef.current) return;
+
         setIsStavePlaying(true);
-        const ctx = audioContextRef.current;
-        const now = ctx.currentTime;
-        let accumulator = 0;
+        let idx = 0;
 
-        melody.forEach(m => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            // Calculate frequency using Equal Temperament (A4 = 440Hz, C4 ~ 261.63Hz)
-            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
-            // Normalize note input (handling both '#' and 'b' if we supported flats, but specific check for '#')
-            const noteBase = m.note.toUpperCase();
-            const accidental = m.accidental ? m.accidental : '';
-            const semitones = notes.indexOf(noteBase + accidental);
-
-            if (semitones !== -1) {
-                // Formula: f = 261.63 * 2^((octave - 4) + semitones/12)
-                // Actually base C4 is 261.63. 
-                // Using distance from C4:
-                const octaveOffset = m.octave - 4;
-                const totalSemitonesFromC4 = (octaveOffset * 12) + semitones;
-                const freq = 261.63 * Math.pow(2, totalSemitonesFromC4 / 12);
-                osc.frequency.value = freq;
+        const playNext = () => {
+            if (idx >= melody.length || !gainNodeRef.current) {
+                setIsStavePlaying(false);
+                return;
             }
 
-            osc.type = 'triangle';
-            osc.connect(gain);
-            gain.connect(analyserRef.current);
+            const m = melody[idx];
+            const noteFreq = (() => {
+                const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const baseNote = noteNames.indexOf(m.note + (m.accidental || ''));
+                if (baseNote === -1) return 440;
+                const A4 = 440;
+                const semitonesFromA4 = (m.octave - 4) * 12 + (baseNote - 9);
+                return A4 * Math.pow(2, semitonesFromA4 / 12);
+            })();
 
-            gain.gain.setValueAtTime(0.5, now + accumulator);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + accumulator + m.duration - 0.05);
+            const osc = audioContextRef.current.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.value = noteFreq;
+            osc.connect(gainNodeRef.current);
+            osc.start();
+            oscillatorRef.current = osc;
 
-            osc.start(now + accumulator);
-            osc.stop(now + accumulator + m.duration);
+            setTimeout(() => {
+                osc.stop();
+                idx++;
+                playNext();
+            }, m.duration * 1000);
+        };
 
-            accumulator += m.duration;
-        });
-
-        // Reset playing state after melody
-        setTimeout(() => setIsStavePlaying(false), accumulator * 1000);
+        playNext();
     };
 
     // Handle File Playback
@@ -423,7 +419,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.controls || "Controls"}
                 initialPos={{ x: '512px', y: '16px' }}
-                initialSize={{ width: '520px', height: '480px' }}
+                initialSize={{ width: '530px', height: '480px' }}
                 className="stave-visualizer-controls-card"
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '60%', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -435,6 +431,8 @@ const AudioPlayer = ({
                     onClear={() => setMelody([])}
                     melody={melody}
                     translations={translations}
+                    volume={volume}
+                    onVolumeChange={setVolume}
                 />
             </DraggableCard>
 

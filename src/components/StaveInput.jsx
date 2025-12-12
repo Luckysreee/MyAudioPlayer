@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Piano from './Piano';
 
 // 1. STAVE CONTROLS (Play/Stop/Clear + Visualizer placeholder if we moved it here, but Visualizer is in parent)
-export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations }) => (
-    <div className="flex-center gap-md" style={{ width: '100%', padding: '1rem' }}>
+export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations, volume, onVolumeChange }) => (
+    <div className="flex-center gap-md" style={{ width: '100%', padding: '1rem', flexDirection: 'column' }}>
         <button
             onClick={onPlay}
             className="btn-primary"
@@ -21,11 +21,26 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
         >
             {isPlaying ? "⏹ Stop" : "▶ Play Melody"}
         </button>
+
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Volume: {Math.round(volume * 100)}%</label>
+            <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+                className="no-drag"
+                style={{ width: '100%' }}
+            />
+        </div>
+
         <button
             onClick={onClear}
             disabled={melody.length === 0}
             className="btn-secondary"
-            style={{ height: '45px', whiteSpace: 'nowrap' }}
+            style={{ height: '45px', whiteSpace: 'nowrap', width: '100%' }}
         >
             {translations.clearAll || "Clear"}
         </button>
