@@ -55,7 +55,7 @@ const SynthControls = ({
                 {!isPlaying ? (
                     <button onClick={onStart} className="btn-primary">▶</button>
                 ) : (
-                    <button onClick={onStop} className="btn-primary" style={{ boxShadow: '0 0 20px rgba(255, 68, 68, 0.4)', background: 'var(--error)' }}>⏹</button>
+                    <button onClick={onStop} className="btn-primary" style={{ background: '#ef4444' }}>⏹</button>
                 )}
             </div>
             <p style={{ textAlign: 'center', marginTop: '1rem', opacity: 0.7 }}>
