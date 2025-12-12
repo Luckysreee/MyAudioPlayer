@@ -146,6 +146,11 @@ select {
   border: 1px solid var(--primary-color);
 }
 
+select option {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
 .card {
   background-color: var(--surface-color);
   padding: 2em;
