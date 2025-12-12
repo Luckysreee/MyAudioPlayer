@@ -147,14 +147,17 @@ const AudioPlayer = ({
             })();
 
             const osc = audioContextRef.current.createOscillator();
+            const noteGain = audioContextRef.current.createGain();
+
             osc.type = 'sine';
             osc.frequency.value = noteFreq;
-            osc.connect(gainNodeRef.current);
 
-            // Apply volume
-            if (gainNodeRef.current.gain) {
-                gainNodeRef.current.gain.value = volume;
-            }
+            // Connect: oscillator -> noteGain -> mainGain -> analyser
+            osc.connect(noteGain);
+            noteGain.connect(gainNodeRef.current);
+
+            // Apply volume to this note's gain
+            noteGain.gain.value = volume;
 
             osc.start();
             oscillatorRef.current = osc;
@@ -449,7 +452,7 @@ const AudioPlayer = ({
             {/* Card 3: Visualizer & Controls (Center, between left and right) */}
             <DraggableCard
                 title={translations.controls || "Controls"}
-                initialPos={{ x: '512px', y: '16px' }}
+                initialPos={{ x: '520px', y: '16px' }}
                 initialSize={{ width: '532px', height: '480px' }}
                 className="stave-visualizer-controls-card"
             >
