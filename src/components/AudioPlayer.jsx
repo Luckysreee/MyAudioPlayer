@@ -316,27 +316,40 @@ const AudioPlayer = ({
     );
 
     const renderSynthMode = () => (
-        <DraggableCard
-            title={translations.synthesizer}
-            initialPos={{ x: 'center', y: 'center' }}
-            initialSize={{ width: '600px', height: 'auto' }}
-        >
-            <div className="visualizer-container" style={{ width: '100%', height: '100px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden' }}>
-                <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
-            </div>
-            <SynthControls
-                frequency={frequency}
-                setFrequency={setFrequency}
-                waveform={waveform}
-                setWaveform={setWaveform}
-                volume={volume}
-                onVolumeChange={handleVolumeChange}
-                isPlaying={isSynthPlaying}
-                onStart={() => setIsSynthPlaying(true)}
-                onStop={() => setIsSynthPlaying(false)}
-                translations={translations}
-            />
-        </DraggableCard>
+        <>
+            {/* Visualizer Card (Left Side) */}
+            <DraggableCard
+                title={translations.visualizer || "Visualizer"}
+                initialPos={{ x: '5%', y: '15%' }}
+                initialSize={{ width: '44%', height: '400px' }}
+                className="synth-visualizer-card"
+            >
+                <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
+                </div>
+            </DraggableCard>
+
+            {/* Controls Card (Right Side) */}
+            <DraggableCard
+                title={translations.synthesizer}
+                initialPos={{ x: '51%', y: '15%' }}
+                initialSize={{ width: '44%', height: 'auto' }}
+                className="synth-controls-card"
+            >
+                <SynthControls
+                    frequency={frequency}
+                    setFrequency={setFrequency}
+                    waveform={waveform}
+                    setWaveform={setWaveform}
+                    volume={volume}
+                    onVolumeChange={handleVolumeChange}
+                    isPlaying={isSynthPlaying}
+                    onStart={() => setIsSynthPlaying(true)}
+                    onStop={() => setIsSynthPlaying(false)}
+                    translations={translations}
+                />
+            </DraggableCard>
+        </>
     );
 
     const renderStaveMode = () => (
