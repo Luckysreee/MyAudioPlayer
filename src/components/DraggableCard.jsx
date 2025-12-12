@@ -1,61 +1,83 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const DraggableCard = ({ children, initialPos = { x: 0, y: 0 }, title, className = '' }) => {
-    const [position, setPosition] = useState(initialPos);
+const DraggableCard = ({ children, title, initialPos, initialSize, className = '' }) => {
+    const [pos, setPos] = useState(initialPos || { x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [rel, setRel] = useState(null); // Relative position of cursor
     const cardRef = useRef(null);
-    const dragStartPos = useRef(null); // { x, y } relative to viewport
-    const cardStartPos = useRef(null); // { x, y } of card at start
 
-    const handlePointerDown = (e) => {
-        // Prevent dragging if interacting with inputs, sliders, or explicit 'no-drag' elements
-        if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'LABEL'].includes(e.target.tagName)) return;
-        if (e.target.closest('.no-drag')) return;
+    // Reset position if initialPos changes (e.g. Layout Reset)
+    useEffect(() => {
+        if (initialPos) setPos(initialPos);
+    }, [initialPos]);
 
-        e.currentTarget.setPointerCapture(e.pointerId);
-        dragStartPos.current = { x: e.clientX, y: e.clientY };
-        cardStartPos.current = { ...position };
-        e.currentTarget.classList.add('dragging');
-    };
+    const onMouseDown = (e) => {
+        // Prevent drag if clicking on controls
+        if (e.target.closest('.no-drag') || e.target.closest('input') || e.target.closest('button')) return;
 
-    const handlePointerMove = (e) => {
-        if (!dragStartPos.current) return;
+        if (e.button !== 0) return; // Only left click
+        setIsDragging(true);
+        const rect = cardRef.current.getBoundingClientRect();
 
-        const dx = e.clientX - dragStartPos.current.x;
-        const dy = e.clientY - dragStartPos.current.y;
-
-        setPosition({
-            x: cardStartPos.current.x + dx,
-            y: cardStartPos.current.y + dy
+        // Calculate offset from top-left of card
+        setRel({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
         });
+
+        e.stopPropagation();
+        e.preventDefault();
     };
 
-    const handlePointerUp = (e) => {
-        dragStartPos.current = null;
-        cardStartPos.current = null;
-        e.currentTarget.releasePointerCapture(e.pointerId);
-        e.currentTarget.classList.remove('dragging');
+    const onMouseMove = (e) => {
+        if (!isDragging) return;
+
+        // Calculate new position relative to parent (.app-content)
+        // We need to account for the parent's offset? 
+        // Actually, since position is fixed/absolute relative to closest positioned ancestor (.app-content)
+        // We just need (Mouse - Rel - ParentOffset). 
+        // Simpler: Just use page coordinates if parent is full screen? 
+        // Better: Calculate relative to window, then subtracting parent offset might be needed if parent isn't at 0,0.
+        // Assuming .app-content provides the context.
+
+        // For simplicity in this "Free" mode, let's use fixed or absolute positioning.
+        // If parent is relative, 'top/left' works.
+
+        const parentRect = cardRef.current.parentElement.getBoundingClientRect();
+
+        const newX = e.clientX - parentRect.left - rel.x;
+        const newY = e.clientY - parentRect.top - rel.y;
+
+        setPos({ x: newX, y: newY });
+    };
+
+    const onMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    // Styles
+    const style = {
+        position: 'absolute',
+        left: pos.x + 'px',
+        top: pos.y + 'px',
+        width: initialSize ? initialSize.width : 'auto',
+        height: initialSize ? initialSize.height : 'auto',
+        zIndex: isDragging ? 1000 : 10,
     };
 
     return (
         <div
             ref={cardRef}
-            className={`draggable-card ${className}`}
-            style={{
-                transform: `translate(${position.x}px, ${position.y}px)`,
-                position: 'absolute', // Floating window
-                touchAction: 'none', // Prevent scrolling on touch
-                zIndex: dragStartPos.current ? 100 : 10 // Bring to front on drag
-            }}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
+            className={`draggable-card ${isDragging ? 'dragging' : ''} ${className}`}
+            style={style}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
         >
-            {/* Optional Header Handle */}
-            <div className="card-handle" style={{ padding: '0.5rem', borderBottom: '1px solid var(--border-subtle)', cursor: 'grab', background: 'var(--bg-element)', borderRadius: 'var(--radius-md) var(--radius-md) 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 600, fontSize: '0.9rem', pointerEvents: 'none' }}>{title || 'Window'}</span>
-                <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>⋮⋮</span>
-            </div>
-            <div className="card-content" style={{ padding: '1.5rem' }}>
+            {title && <div className="card-header">{title}</div>}
+            <div className="card-handle-grip" style={{ position: 'absolute', top: '10px', right: '10px', opacity: 0.5, cursor: 'grab' }}>⋮⋮</div>
+            <div className="card-content">
                 {children}
             </div>
         </div>

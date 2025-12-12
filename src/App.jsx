@@ -19,6 +19,7 @@ function App() {
     const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
     const [mode, setMode] = useState('player');
     const [zoomLevel, setZoomLevel] = useState(100);
+    const [resetKey, setResetKey] = useState(0);
 
     const t = translations[language];
 
@@ -101,6 +102,22 @@ function App() {
 
                     <button
                         className="btn-secondary"
+                        onClick={() => {
+                            // Force Remount to reset positions? Or use a context?
+                            // Simplest way: Trigger a key change on the content wrapper.
+                            setMode(m => m); // Re-set mode might not work if React diffs key.
+                            // We'll add a 'layoutKey' state.
+                            window.location.reload(); // BRUTE FORCE? No.
+                            // Ideal: Pass a key to AudioPlayer that increments.
+                            setResetKey(k => k + 1);
+                        }}
+                        title="Reset Layout"
+                        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                    >
+                        ↺
+                    </button>
+                    <button
+                        className="btn-secondary"
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                         style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
@@ -135,6 +152,7 @@ function App() {
                     fontSize: `${zoomLevel}%`
                 }}>
                     <AudioPlayer
+                        key={resetKey}
                         mode={mode}
                         setMode={setMode}
                         currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
