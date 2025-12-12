@@ -18,7 +18,8 @@ const AudioPlayer = ({
     playFile,
     handleDelete,
     handleClearAll,
-    dragHandlers
+    dragHandlers,
+    onUploadClick
 }) => {
 
     // Audio Context & State (SAME AS BEFORE)
