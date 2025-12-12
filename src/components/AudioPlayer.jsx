@@ -406,7 +406,7 @@ const AudioPlayer = ({
     );
 
     return (
-        <div className="audio-player-container" style={{ width: '100%', height: 'calc(100vh - 100px)', position: 'relative' }}>
+        <div className="audio-player-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
             {mode === 'player' && renderPlayerMode()}
             {mode === 'synth' && renderSynthMode()}
             {mode === 'stave' && renderStaveMode()}
