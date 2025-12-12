@@ -1,37 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 
-const Visualizer = ({ audioRef, isPlaying }) => {
+const Visualizer = ({ analyser, isPlaying }) => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
-    const audioContextRef = useRef(null);
-    const analyserRef = useRef(null);
-    const sourceRef = useRef(null);
 
     useEffect(() => {
-        if (!audioRef.current) return;
-
-        if (!audioContextRef.current) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioContextRef.current = new AudioContext();
-            analyserRef.current = audioContextRef.current.createAnalyser();
-
-            try {
-                sourceRef.current = audioContextRef.current.createMediaElementSource(audioRef.current);
-                sourceRef.current.connect(analyserRef.current);
-                analyserRef.current.connect(audioContextRef.current.destination);
-            } catch (e) {
-                // Source already connected ignored
-            }
-        }
-
-        if (isPlaying && audioContextRef.current.state === 'suspended') {
-            audioContextRef.current.resume();
-        }
-
-    }, [isPlaying, audioRef]);
-
-    useEffect(() => {
-        if (!isPlaying) {
+        if (!isPlaying || !analyser) {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
             return;
         }
@@ -40,8 +14,6 @@ const Visualizer = ({ audioRef, isPlaying }) => {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        const analyser = analyserRef.current;
-        if (!analyser) return;
 
         analyser.fftSize = 256;
         const bufferLength = analyser.frequencyBinCount;
@@ -77,7 +49,7 @@ const Visualizer = ({ audioRef, isPlaying }) => {
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
-    }, [isPlaying]);
+    }, [isPlaying, analyser]);
 
     return <canvas ref={canvasRef} width={600} height={100} />;
 };

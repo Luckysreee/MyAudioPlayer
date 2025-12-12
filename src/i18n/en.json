@@ -1,5 +1,5 @@
 {
-    "title": "Audio Player",
+    "title": "Audio Studio",
     "selectFiles": "Select Audio Files",
     "noFileSelected": "No file selected",
     "playing": "Playing",
@@ -10,5 +10,16 @@
     "playlist": "Playlist",
     "dragDropText": "Drag & Drop audio files here or click to select",
     "unknownArtist": "Unknown Artist",
-    "unknownTitle": "Unknown Title"
+    "unknownTitle": "Unknown Title",
+    "waveform": "Waveform",
+    "frequency": "Frequency",
+    "startSound": "Start Sound",
+    "stopSound": "Stop Sound",
+    "theme": "Theme",
+    "zoom": "Zoom",
+    "mode": "Mode",
+    "player": "Audio Player",
+    "synthesizer": "Synthesizer",
+    "delete": "Delete",
+    "clearAll": "Clear All"
 }

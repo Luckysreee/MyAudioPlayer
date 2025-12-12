@@ -1,5 +1,5 @@
 {
-    "title": "Lecteur Audio",
+    "title": "Studio Audio",
     "selectFiles": "Sélectionner des fichiers audio",
     "noFileSelected": "Aucun fichier sélectionné",
     "playing": "Lecture",
@@ -10,5 +10,16 @@
     "playlist": "Liste de lecture",
     "dragDropText": "Glissez et déposez des fichiers audio ici ou cliquez pour sélectionner",
     "unknownArtist": "Artiste inconnu",
-    "unknownTitle": "Titre inconnu"
+    "unknownTitle": "Titre inconnu",
+    "waveform": "Forme d'onde",
+    "frequency": "Fréquence",
+    "startSound": "Démarrer le son",
+    "stopSound": "Arrêter le son",
+    "theme": "Thème",
+    "zoom": "Zoom",
+    "mode": "Mode",
+    "player": "Lecteur Audio",
+    "synthesizer": "Synthétiseur",
+    "delete": "Supprimer",
+    "clearAll": "Tout effacer"
 }

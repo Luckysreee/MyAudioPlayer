@@ -1,5 +1,5 @@
 {
-    "title": "Reproductor de Audio",
+    "title": "Estudio de Audio",
     "selectFiles": "Seleccionar Archivos de Audio",
     "noFileSelected": "Ningún archivo seleccionado",
     "playing": "Reproduciendo",
@@ -10,5 +10,16 @@
     "playlist": "Lista de Reproducción",
     "dragDropText": "Arrastra y suelta archivos de audio aquí o haz clic para seleccionar",
     "unknownArtist": "Artista Desconocido",
-    "unknownTitle": "Título Desconocido"
+    "unknownTitle": "Título Desconocido",
+    "waveform": "Forma de Onda",
+    "frequency": "Frecuencia",
+    "startSound": "Iniciar Sonido",
+    "stopSound": "Detener Sonido",
+    "theme": "Tema",
+    "zoom": "Zoom",
+    "mode": "Modo",
+    "player": "Reproductor de Audio",
+    "synthesizer": "Sintetizador",
+    "delete": "Eliminar",
+    "clearAll": "Borrar Todo"
 }

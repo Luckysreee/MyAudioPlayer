@@ -33,7 +33,7 @@ function App() {
         const selectedFiles = Array.from(e.target.files);
         setFiles((prev) => [...prev, ...selectedFiles]);
         if (currentFileIndex === -1 && selectedFiles.length > 0) {
-            setCurrentFileIndex(0); // Start playing the first new file if list was empty
+            setCurrentFileIndex(0);
         }
     };
 
@@ -46,11 +46,6 @@ function App() {
     const nextTrack = () => {
         if (currentFileIndex < files.length - 1) {
             setCurrentFileIndex(currentFileIndex + 1);
-        } else {
-            // Loop back to start or stop? Let's stop or loop. Loop is friendlier?
-            // Requirement says "Auto-play next track". Usually implies stop at end.
-            // Let's loop for continuous listening pleasure if it's the only option, but simply stopping is safer.
-            // We'll just stop if it's the last track.
         }
     };
 
@@ -58,6 +53,26 @@ function App() {
         if (currentFileIndex > 0) {
             setCurrentFileIndex(currentFileIndex - 1);
         }
+    };
+
+    const handleDelete = (index) => {
+        setFiles(prev => {
+            const newFiles = [...prev];
+            newFiles.splice(index, 1);
+            return newFiles;
+        });
+
+        // Adjust current index if needed
+        if (index === currentFileIndex) {
+            setCurrentFileIndex(-1); // Stop playing if deleted
+        } else if (index < currentFileIndex) {
+            setCurrentFileIndex(currentFileIndex - 1);
+        }
+    };
+
+    const handleClearAll = () => {
+        setFiles([]);
+        setCurrentFileIndex(-1);
     };
 
     const handleDragOver = (e) => {
@@ -77,7 +92,7 @@ function App() {
         if (droppedFiles.length > 0) {
             setFiles(prev => {
                 const newFiles = [...prev, ...droppedFiles];
-                if (currentFileIndex === -1) setCurrentFileIndex(prev.length); // Start playing first of dropped
+                if (currentFileIndex === -1) setCurrentFileIndex(prev.length);
                 return newFiles;
             });
         }
@@ -129,6 +144,8 @@ function App() {
                     currentFileIndex={currentFileIndex}
                     onPlay={playFile}
                     onReorder={setFiles}
+                    onDelete={handleDelete}
+                    onClearAll={handleClearAll}
                     translations={t}
                 />
             </main>

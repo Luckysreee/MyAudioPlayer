@@ -1,5 +1,5 @@
 {
-    "title": "Kicheza Sauti",
+    "title": "Audio Studio",
     "selectFiles": "Chagua Faili za Sauti",
     "noFileSelected": "Hakuna faili iliyochaguliwa",
     "playing": "Inacheza",
@@ -10,5 +10,16 @@
     "playlist": "Orodha ya Nyimbo",
     "dragDropText": "Buruta na uweke faili za sauti hapa au bonyeza kuchagua",
     "unknownArtist": "Msanii Hajulikani",
-    "unknownTitle": "Kichwa Hakijulikani"
+    "unknownTitle": "Kichwa Hakijulikani",
+    "waveform": "Sura ya Wimbi",
+    "frequency": "Masafa",
+    "startSound": "Anza Sauti",
+    "stopSound": "Simamisha Sauti",
+    "theme": "Mandhari",
+    "zoom": "Kuza",
+    "mode": "Hali",
+    "player": "Kicheza Sauti",
+    "synthesizer": "Sintethiza",
+    "delete": "Futa",
+    "clearAll": "Futa Zote"
 }
