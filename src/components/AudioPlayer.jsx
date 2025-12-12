@@ -115,18 +115,21 @@ const AudioPlayer = ({
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
 
-            // Simple Note to Freq converter
-            // C4 = 261.63
-            // This is a naive implementation, ideally use a library or proper map
-            // For demo: verify 'm.note', 'm.octave'
-            // ... (Logic placeholder, implementing simple frequency calculation)
-
-            // Basic frequency map for C4-B4
+            // Calculate frequency using Equal Temperament (A4 = 440Hz, C4 ~ 261.63Hz)
             const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-            const semitones = notes.indexOf(m.note + (m.accidental || ''));
+
+            // Normalize note input (handling both '#' and 'b' if we supported flats, but specific check for '#')
+            const noteBase = m.note.toUpperCase();
+            const accidental = m.accidental ? m.accidental : '';
+            const semitones = notes.indexOf(noteBase + accidental);
+
             if (semitones !== -1) {
-                const baseFreq = 261.63 * Math.pow(2, (m.octave - 4));
-                const freq = baseFreq * Math.pow(2, semitones / 12);
+                // Formula: f = 261.63 * 2^((octave - 4) + semitones/12)
+                // Actually base C4 is 261.63. 
+                // Using distance from C4:
+                const octaveOffset = m.octave - 4;
+                const totalSemitonesFromC4 = (octaveOffset * 12) + semitones;
+                const freq = 261.63 * Math.pow(2, totalSemitonesFromC4 / 12);
                 osc.frequency.value = freq;
             }
 

@@ -350,3 +350,35 @@ canvas {
 .card-content::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Accessibility Mode (High Contrast) */
+.accessibility-mode {
+  --bg-color: #000000;
+  --text-color: #ffff00;
+  --primary-color: #00ff00;
+  --secondary-color: #00ffff;
+  --surface-color: #1a1a1a;
+  --error-color: #ff3333;
+  --base-font-size: 20px;
+  /* Increased font size */
+  --border-radius: 4px;
+}
+
+.accessibility-mode button,
+.accessibility-mode input,
+.accessibility-mode select,
+.accessibility-mode .card,
+.accessibility-mode .draggable-card,
+.accessibility-mode .app-header,
+.accessibility-mode .app-footer {
+  border: 2px solid #ffffff;
+  /* High contrast borders */
+  box-shadow: none !important;
+}
+
+.accessibility-mode .btn-icon:hover,
+.accessibility-mode button:hover {
+  background: #333;
+  color: #fff;
+  transform: none;
+}

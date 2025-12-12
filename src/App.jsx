@@ -116,12 +116,8 @@ function App() {
                     <button
                         className="btn-secondary"
                         onClick={() => {
-                            // Force Remount to reset positions? Or use a context?
-                            // Simplest way: Trigger a key change on the content wrapper.
-                            setMode(m => m); // Re-set mode might not work if React diffs key.
-                            // We'll add a 'layoutKey' state.
-                            window.location.reload(); // BRUTE FORCE? No.
-                            // Ideal: Pass a key to AudioPlayer that increments.
+                            // Force re-mount of the AudioPlayer component to reset card positions.
+                            // Changing the key prop triggers a full unmount/mount cycle.
                             setResetKey(k => k + 1);
                         }}
                         title="Reset Layout"
