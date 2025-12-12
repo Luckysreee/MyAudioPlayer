@@ -406,11 +406,11 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
+            {/* Card 2: Animation (Full height on left) */}
             <DraggableCard
                 title="Audio Wave"
-                initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '480px', height: 'calc(100% - 522px)' }}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: '480px', height: 'calc(100% - 26px)' }}
                 className="stave-animation-card"
             >
                 <div style={{
