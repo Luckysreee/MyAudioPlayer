@@ -21,10 +21,10 @@ const SynthControls = ({
     };
 
     return (
-        <div className="synth-controls" style={{ display: 'flex' }}>
-            <div className="control-group">
-                <label>{translations.waveform}</label>
-                <select value={waveform} onChange={handleWaveformChange}>
+        <div className="synth-controls-wrapper">
+            <div className="flex-between mb-4">
+                <label className="text-large">{translations.waveform}</label>
+                <select value={waveform} onChange={handleWaveformChange} style={{ maxWidth: '200px' }}>
                     <option value="sine">Sine</option>
                     <option value="square">Square</option>
                     <option value="sawtooth">Sawtooth</option>
@@ -35,25 +35,32 @@ const SynthControls = ({
             </div>
 
             {!isNoise && (
-                <div className="control-group">
-                    <label>{translations.frequency} ({frequency} Hz)</label>
+                <div className="mb-4">
+                    <div className="flex-between">
+                        <label>{translations.frequency}</label>
+                        <span>{frequency} Hz</span>
+                    </div>
                     <input
                         type="range"
                         min="50"
                         max="2000"
                         value={frequency}
                         onChange={handleFrequencyChange}
+                        className="slider"
                     />
                 </div>
             )}
 
-            <div className="buttons">
+            <div className="flex-center mt-4">
                 {!isPlaying ? (
-                    <button onClick={onStart}>{translations.startSound}</button>
+                    <button onClick={onStart} className="btn-primary">▶</button>
                 ) : (
-                    <button onClick={onStop} className="stop-btn">{translations.stopSound}</button>
+                    <button onClick={onStop} className="btn-primary" style={{ boxShadow: '0 0 20px rgba(255, 68, 68, 0.4)', background: 'var(--error)' }}>⏹</button>
                 )}
             </div>
+            <p style={{ textAlign: 'center', marginTop: '1rem', opacity: 0.7 }}>
+                {isPlaying ? translations.stopSound : translations.startSound}
+            </p>
         </div>
     );
 };
