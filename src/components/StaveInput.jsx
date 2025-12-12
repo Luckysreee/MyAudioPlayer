@@ -49,47 +49,50 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
 );
 
 // 2. MELODY TABLE
-export const MelodyTable = ({ melody, onDelete, translations }) => (
-    <div className="melody-display" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
-            <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead style={{ background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 1 }}>
-                        <tr>
-                            <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
-                            <th style={{ padding: '8px', textAlign: 'left' }}>Octave</th>
-                            <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {melody.map((m, idx) => (
-                            <tr key={m.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                <td style={{ padding: '8px' }}>{m.note}{m.accidental}</td>
-                                <td style={{ padding: '8px' }}>{m.octave}</td>
-                                <td style={{ padding: '8px' }}>{m.duration}s</td>
-                                <td style={{ textAlign: 'center', padding: '8px' }}>
-                                    <button
-                                        onClick={() => onDelete(m.id)}
-                                        style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--error-color)', border: 'none', cursor: 'pointer' }}
-                                    >
-                                        ✕
-                                    </button>
-                                </td>
+export const MelodyTable = ({ melody, onDelete, translations, currentNoteIndex = -1 }) => {
+    return (
+        <div className="melody-table" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
+                <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 1 }}>
+                            <tr>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>Octave</th>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
+                                <th></th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        )}
-    </div>
-);
-
-// 3. MAIN EDITOR (Input Modes)
-const StaveInput = ({ melody, setMelody, translations }) => {
-    const [inputMode, setInputMode] = useState('piano'); // 'text', 'builder', 'piano'
-    const [textInput, setTextInput] = useState('');
-    const [error, setError] = useState('');
+                        </thead>
+                        <tbody>
+                            {melody.map((m, idx) => (
+                                <tr
+                                    key={m.id}
+                                    style={{
+                                        borderBottom: '1px solid var(--glass-border)',
+                                        background: idx === currentNoteIndex ? 'var(--primary-color)' : 'transparent',
+                                        opacity: idx === currentNoteIndex ? 1 : 0.8,
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                >
+                                    <td style={{ padding: '8px' }}>{m.note}{m.accidental}</td>
+                                    <td style={{ padding: '8px' }}>{m.octave}</td>
+                                    <td style={{ padding: '8px' }}>{m.duration}s</td>
+                                    <td style={{ textAlign: 'center', padding: '8px' }}>
+                                        <button
+                                            onClick={() => onDelete(m.id)}
+                                            style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--error-color)', border: 'none', cursor: 'pointer' }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
 
     // Builder State
     const [note, setNote] = useState('C');

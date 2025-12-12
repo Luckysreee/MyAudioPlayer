@@ -41,6 +41,7 @@ const AudioPlayer = ({
     // Stave/Melody State
     const [melody, setMelody] = useState([]);
     const [isStavePlaying, setIsStavePlaying] = useState(false);
+    const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
 
     // Global Volume
     const [volume, setVolume] = useState(0.5);
@@ -111,6 +112,7 @@ const AudioPlayer = ({
             // Stop playback
             setIsStavePlaying(false);
             shouldContinueRef.current = false;
+            setCurrentNoteIndex(-1);
 
             if (oscillatorRef.current) {
                 try {
@@ -137,10 +139,14 @@ const AudioPlayer = ({
             if (idx >= melody.length || !gainNodeRef.current || !shouldContinueRef.current) {
                 setIsStavePlaying(false);
                 shouldContinueRef.current = false;
+                setCurrentNoteIndex(-1);
                 oscillatorRef.current = null;
                 timeoutIdRef.current = null;
                 return;
             }
+
+            // Highlight current note
+            setCurrentNoteIndex(idx);
 
             const m = melody[idx];
             const noteFreq = (() => {
@@ -487,6 +493,7 @@ const AudioPlayer = ({
                     melody={melody}
                     onDelete={(id) => setMelody(melody.filter(n => n.id !== id))}
                     translations={translations}
+                    currentNoteIndex={currentNoteIndex}
                 />
             </DraggableCard>
         </>
