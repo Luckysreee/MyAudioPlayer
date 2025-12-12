@@ -5,11 +5,28 @@ const SynthControls = ({
     setFrequency,
     waveform,
     setWaveform,
+    volume,
+    onVolumeChange,
     isPlaying,
     onStart,
     onStop,
     translations
 }) => {
+    // ...
+    <div className="mb-4">
+        <div className="flex-between">
+            <label>{translations.volume || "Volume"}</label>
+            <span>{Math.round(volume * 100)}%</span>
+        </div>
+        <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={onVolumeChange}
+        />
+    </div>
     const isNoise = waveform === 'white-noise' || waveform === 'pink-noise';
 
     const handleWaveformChange = (e) => {
@@ -46,16 +63,30 @@ const SynthControls = ({
                         max="2000"
                         value={frequency}
                         onChange={handleFrequencyChange}
-                        className="slider"
                     />
                 </div>
             )}
+
+            <div className="mb-4">
+                <div className="flex-between">
+                    <label>{translations.volume || "Volume"}</label>
+                    <span>{Math.round(volume * 100)}%</span>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={onVolumeChange}
+                />
+            </div>
 
             <div className="flex-center mt-4">
                 {!isPlaying ? (
                     <button onClick={onStart} className="btn-primary">▶</button>
                 ) : (
-                    <button onClick={onStop} className="btn-primary" style={{ background: '#ef4444' }}>⏹</button>
+                    <button onClick={onStop} className="btn-primary" style={{ background: 'var(--danger)', borderColor: 'var(--danger)' }}>⏹</button>
                 )}
             </div>
             <p style={{ textAlign: 'center', marginTop: '1rem', opacity: 0.7 }}>

@@ -3,7 +3,7 @@ import AudioPlayer from './components/AudioPlayer';
 import LanguageSelector from './components/LanguageSelector';
 import AccessibilityToggle from './components/AccessibilityToggle';
 import './styles/base.css';
-import './styles/accessibility.css';
+// import './styles/accessibility.css'; // Removed as merged into base.css
 
 import en from './i18n/en.json';
 import es from './i18n/es.json';
@@ -110,70 +110,49 @@ function App() {
 
     return (
         <div className="app-container">
-            <header className="flex-between mb-4">
+            {/* SECTION 1: HEADER */}
+            <header className="app-header">
                 <h1>{t.title}</h1>
+
+                {/* TAB BAR Centered in Header or separate? User said "Header, Mid, Footer". Tabs usually go in Mid top or Header bottom. Let's put them in Header for compactness. */}
+                <nav className="tab-bar">
+                    <button
+                        className={`tab-btn ${mode === 'player' ? 'active' : ''}`}
+                        onClick={() => setMode('player')}
+                    >
+                        {t.player}
+                    </button>
+                    <button
+                        className={`tab-btn ${mode === 'synth' ? 'active' : ''}`}
+                        onClick={() => setMode('synth')}
+                    >
+                        {t.synthesizer}
+                    </button>
+                    <button
+                        className={`tab-btn ${mode === 'stave' ? 'active' : ''}`}
+                        onClick={() => setMode('stave')}
+                    >
+                        {t.staveInput}
+                    </button>
+                </nav>
+
                 <div className="flex-center gap-md">
                     <LanguageSelector currentLang={language} onLanguageChange={setLanguage} />
-                    <AccessibilityToggle
-                        isHighContrast={isHighContrast}
-                        toggleHighContrast={() => setIsHighContrast(!isHighContrast)}
-                        label={t.accessibilityMode}
-                    />
+                    <button
+                        className={`a11y-toggle ${isHighContrast ? 'active' : ''}`}
+                        onClick={() => setIsHighContrast(!isHighContrast)}
+                        title={t.accessibilityMode}
+                    >
+                        <span style={{ fontSize: '1.2rem' }}>👁</span>
+                    </button>
                 </div>
             </header>
 
-            {/* TAB BAR NAVIGATION */}
-            <nav className="tab-bar">
-                <button
-                    className={`tab-btn ${mode === 'player' ? 'active' : ''}`}
-                    onClick={() => setMode('player')}
-                >
-                    {t.player}
-                </button>
-                <button
-                    className={`tab-btn ${mode === 'synth' ? 'active' : ''}`}
-                    onClick={() => setMode('synth')}
-                >
-                    {t.synthesizer}
-                </button>
-                <button
-                    className={`tab-btn ${mode === 'stave' ? 'active' : ''}`}
-                    onClick={() => setMode('stave')}
-                >
-                    {t.staveInput}
-                </button>
-            </nav>
-
-            <main>
-                {/* Drag Drop only relevant for Player mode? Or always available? 
-                    Design says "Playlist card". Let's put DropZone inside Player Tab implicitly 
-                    via AudioPlayer component or here. Let's pass it down or keep it here 
-                    but only show in player mode to reduce clutter. */}
-
-                {mode === 'player' && (
-                    <div
-                        className="drop-zone card"
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        onClick={() => document.getElementById('file-input').click()}
-                        style={{ textAlign: 'center', padding: '3rem', cursor: 'pointer', borderStyle: 'dashed' }}
-                    >
-                        <p style={{ pointerEvents: 'none' }}>{t.dragDropText}</p>
-                        <input
-                            id="file-input"
-                            type="file"
-                            multiple
-                            accept="audio/*"
-                            onChange={handleFileSelect}
-                            style={{ display: 'none' }}
-                        />
-                    </div>
-                )}
-
+            {/* SECTION 2: MID CONTENT */}
+            <main className="app-content">
                 <AudioPlayer
-                    mode={mode} // Pass mode
-                    setMode={setMode} // Allow internal switches if needed (though we use tabs now)
+                    mode={mode}
+                    setMode={setMode}
                     currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
                     onEnded={nextTrack}
                     onNext={nextTrack}
@@ -185,8 +164,20 @@ function App() {
                     playFile={playFile}
                     handleDelete={handleDelete}
                     handleClearAll={handleClearAll}
+                    // Drag Drop Props for passing down
+                    dragHandlers={{
+                        onDragOver: handleDragOver,
+                        onDragLeave: handleDragLeave,
+                        onDrop: handleDrop
+                    }}
                 />
             </main>
+
+            {/* SECTION 3: FOOTER */}
+            <footer className="app-footer">
+                <div>© 2025 Audio Studio</div>
+                <div>{mode.toUpperCase()} MODE</div>
+            </footer>
         </div>
     );
 }

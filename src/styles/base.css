@@ -7,10 +7,10 @@
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-sm: 6px;
-  --max-width: 900px;
-  /* Tighter width */
-  --app-height: 85vh;
-  /* Fixed height feel */
+  --max-width: 1200px;
+  /* Wider for side-by-side */
+  --header-height: 80px;
+  --footer-height: 40px;
 
   /* Fonts */
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -25,40 +25,35 @@
 /*                THEMES                     */
 /* ========================================= */
 
-/* 1. DARK MODE ("DEEP SPACE") - Default */
-/* Reference: Black/Deep Blue BG, Cyan + Purple accents, tight layout */
+/* 1. DARK MODE ("DEEP SPACE") */
 :root {
   --bg-body: #000000;
   --bg-app: #03050c;
-  /* Deepest Navy/Black */
   --bg-panel: #0b0f19;
-  /* Slightly lighter navy */
   --bg-element: #131b2e;
 
   --border-subtle: #1f2937;
   --border-active: #00f3ff;
-  /* Cyan Glow Border */
 
   --text-main: #ffffff;
   --text-muted: #94a3b8;
 
   --primary: #00f3ff;
-  /* Cyan Neon */
   --primary-hover: #5eead4;
-  --secondary: #bf00ff;
-  /* Purple Accent */
+
+  /* NO RED */
+  --danger: #d97706;
+  /* Orange for stop/delete */
 
   --card-shadow: 0 0 0 1px #1f2937, 0 10px 20px rgba(0, 0, 0, 0.5);
   --neon-glow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
 /* 2. LIGHT MODE ("SOFT NUDE") */
-/* Pastel Pink BG, Light Grey Header, Dull White Cards, #f6bb63 Accent */
 .light-theme {
   --bg-body: #fff1f2;
-  /* Pastel Pink (Rose 50) */
+  /* Pastel Pink */
   --bg-app: #fdfbf7;
-  /* Warm Off-White base */
   --bg-panel: #fafafa;
   /* Dull White */
   --bg-element: #f3f4f6;
@@ -68,42 +63,31 @@
   --border-active: #f6bb63;
 
   --text-main: #44403c;
-  /* Warm Dark Grey */
   --text-muted: #78716c;
-  /* Warm Medium Grey */
 
   --primary: #f6bb63;
-  /* Sandy Orange Accent */
+  /* Sandy Orange */
   --primary-hover: #d97706;
-  --secondary: #f43f5e;
-  /* Rose accent for variety */
 
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+  --danger: #d97706;
+
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   --neon-glow: none;
 }
 
-/* 3. ACCESSIBILITY MODE (High Contrast) */
-/* Override via specific class */
+/* 3. ACCESSIBILITY MODE */
 .accessibility-mode {
   --bg-body: #000000 !important;
   --bg-app: #000000 !important;
   --bg-panel: #000000 !important;
   --bg-element: #000000 !important;
-
   --border-subtle: #ffffff !important;
   --border-active: #ffff00 !important;
-
   --text-main: #ffffff !important;
   --text-muted: #ffff00 !important;
-  /* Yellow for secondary text */
-
   --primary: #ffff00 !important;
-  /* Yellow */
-  --primary-hover: #ffffff !important;
-
+  --danger: #ffff00 !important;
   --card-shadow: 0 0 0 2px #ffffff !important;
-  /* Strong borders */
-  --neon-glow: none !important;
 }
 
 /* ========================================= */
@@ -119,156 +103,179 @@ body {
   font-family: var(--font-ui);
   background-color: var(--bg-body);
   color: var(--text-main);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* Center the "App Window" */
-  transition: background-color var(--trans-speed), color var(--trans-speed);
+  height: 100vh;
+  overflow: hidden;
+  /* Fix body, scroll internal */
 }
 
 #root {
   width: 100%;
-  max-width: var(--max-width);
-  padding: 0;
-  /* Removing padding to let app container handle it */
+  height: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* The "App Window" look */
+/* 3-Section App Container */
 .app-container {
   background: var(--bg-app);
   border-radius: var(--radius-lg);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-  padding: 2rem 2.5rem;
-  min-height: 600px;
+  width: 100%;
+  max-width: var(--max-width);
+  height: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border-subtle);
-  position: relative;
   overflow: hidden;
 }
 
-/* High Contrast Border Fix */
 .accessibility-mode .app-container {
   border: 4px solid #fff;
   box-shadow: none;
 }
 
-/* ========================================= */
-/*              TYPOGRAPHY                   */
-/* ========================================= */
-h1 {
-  font-size: 1.75rem;
-  margin: 0;
-  font-weight: 700;
-  color: var(--text-main);
+/* Section 1: Header */
+.app-header {
+  height: var(--header-height);
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.light-theme h1 {
-  color: #44403c;
+/* Section 2: Mid Content (Grid) */
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Side by Side */
+  gap: 1.5rem;
+  align-items: start;
 }
 
-h2,
-h3 {
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
-}
-
-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+/* Section 3: Footer */
+.app-footer {
+  height: var(--footer-height);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  display: block;
+  flex-shrink: 0;
+  background: var(--bg-element);
 }
 
-.accessibility-mode label {
-  font-size: 0.85rem;
-  color: #ffff00;
+/* Full Width span for specific items */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Responsive: Stack on mobile */
+@media (max-width: 768px) {
+  .app-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ========================================= */
 /*              COMPONENTS                   */
 /* ========================================= */
 
-/* 1. Header Area */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--bg-element);
-}
-
-/* 2. Tabs - "Pill/Text" Style */
+/* Tabs */
 .tab-bar {
   display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 0px;
-  width: 100%;
+  gap: 1.5rem;
 }
 
 .tab-btn {
   background: transparent;
   color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
   border: none;
-  border-bottom: 2px solid transparent;
   cursor: pointer;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 
 .tab-btn:hover {
+  background: var(--bg-element);
   color: var(--text-main);
 }
 
 .tab-btn.active {
+  background: var(--bg-element);
   color: var(--primary);
-  border-bottom-color: var(--primary);
-  text-shadow: var(--neon-glow);
+  box-shadow: 0 0 0 1px var(--border-subtle);
 }
 
-/* 3. Cards */
+/* A11y Button (Toggle Look) */
+.a11y-toggle {
+  background: transparent;
+  border: 2px solid var(--text-muted);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+}
+
+.a11y-toggle:hover {
+  border-color: var(--text-main);
+  color: var(--text-main);
+}
+
+.a11y-toggle.active {
+  background: #ffff00;
+  color: #000;
+  border-color: #ffff00;
+}
+
+.light-theme .a11y-toggle.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Cards & Panels */
 .card {
   background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  box-shadow: var(--card-shadow);
   padding: 1.5rem;
-  margin-bottom: 1.25rem;
+  height: 100%;
+  /* Fill grid cell */
 }
 
-.drop-zone {
-  border: 2px dashed var(--border-subtle);
-  background: transparent;
-}
-
-/* 4. Controls */
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
-
-/* Circular Play Button */
+/* Controls */
 .btn-primary {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
-  /* Transparent dark base */
+  background: var(--bg-element);
   border: 2px solid var(--primary);
   color: var(--primary);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
   box-shadow: var(--neon-glow);
+  transition: all 0.2s;
 }
 
 .btn-primary:hover {
@@ -277,149 +284,112 @@ button {
   transform: scale(1.05);
 }
 
-.light-theme .btn-primary {
+/* PIANO Styling (Realistic) */
+.piano-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.piano-keys {
+  display: flex;
+  position: relative;
+}
+
+.key {
+  width: 40px;
+  height: 140px;
   background: #fff;
-  color: var(--primary);
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  z-index: 1;
+  cursor: pointer;
+  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.1);
 }
 
-.light-theme .btn-primary:hover {
+.key.black {
+  width: 24px;
+  height: 90px;
+  background: #111;
+  border: 1px solid #000;
+  position: absolute;
+  /* Absolute positioning relative to next white key usually, but here flex is tricky. */
+  /* Alternative approach: Negative Margins for flex overlay */
+  margin-left: -12px;
+  margin-right: -12px;
+  z-index: 10;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.key:active {
   background: var(--primary);
-  color: #fff;
 }
 
-.btn-secondary {
-  background: transparent;
-  color: var(--text-muted);
+.key.black:active {
+  background: var(--primary);
+}
+
+/* Visualizer */
+.visualizer-container {
+  height: 160px;
   border: 1px solid var(--border-subtle);
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  background: #000;
+  padding: 4px;
 }
 
-.btn-secondary:hover {
-  border-color: var(--text-main);
+/* Text & Inputs */
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-main);
 }
 
-/* Sliders */
+h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
   background: transparent;
-  margin: 0.8rem 0;
+  margin: 0.5rem 0;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 4px;
+  height: 6px;
   background: var(--bg-element);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 14px;
-  width: 14px;
+  height: 16px;
+  width: 16px;
   border-radius: 50%;
   background: var(--primary);
   margin-top: -5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  transition: transform 0.1s;
+  cursor: pointer;
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-/* Visualizer Container */
-.visualizer-container {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--primary);
-  /* Cyan Frame */
-  padding: 4px;
-  /* Frame spacing */
-  background: transparent;
-  box-shadow: var(--neon-glow);
-  margin-bottom: 2rem;
-}
-
-.light-theme .visualizer-container {
-  border-color: var(--border-subtle);
-  box-shadow: none;
-}
-
-/* Inputs */
-select,
-input[type="text"],
-textarea {
-  background: var(--bg-element);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 0.5rem;
+/* Playlist */
+.playlist-item {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 0.9rem;
-}
-
-/* Specific Utilities */
-.flex-between {
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.gap-md {
-  gap: 1rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-/* Stave Piano */
-.piano-keys {
-  gap: 1px;
+.playlist-item:hover {
   background: var(--bg-element);
-  padding: 1px;
-  border-radius: 4px;
-}
-
-.key {
-  border: none;
-  border-radius: 0 0 3px 3px;
-}
-
-.key.black {
-  background: #111;
-  color: transparent;
-  border-radius: 0 0 2px 2px;
-}
-
-.light-theme .key.black {
-  background: #333;
-}
-
-/* List Styles */
-.playlist-item {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--border-subtle);
-  color: var(--text-muted);
 }
 
 .playlist-item.active {
   color: var(--primary);
-  background: linear-gradient(90deg, rgba(0, 243, 255, 0.05), transparent);
-}
-
-.light-theme .playlist-item.active {
-  background: rgba(246, 187, 99, 0.1);
+  font-weight: 600;
 }

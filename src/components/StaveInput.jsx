@@ -139,7 +139,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                             onChange={handleTextChange}
                             placeholder="C4 0.5&#10;E4 0.5"
                         />
-                        {error && <div style={{ color: 'var(--error)', margin: '0.5rem 0' }}>{error}</div>}
+                        {error && <div style={{ color: 'var(--danger)', margin: '0.5rem 0' }}>{error}</div>}
                         <button onClick={handleTextSubmit} className="btn-secondary mt-4" style={{ width: '100%' }}>{translations.addNote || "Add Notes"}</button>
                     </div>
                 )}
@@ -176,7 +176,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                         {!isPlaying ? (
                             <button onClick={onPlay} disabled={melody.length === 0} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem' }}>▶</button>
                         ) : (
-                            <button onClick={onPlay} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem', background: 'var(--error)' }}>⏹</button>
+                            <button onClick={onPlay} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem', background: 'var(--danger)' }}>⏹</button>
                         )}
                     </div>
                 </div>
@@ -201,7 +201,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                                         <td style={{ textAlign: 'center' }}>
                                             <button
                                                 onClick={() => handleDeleteNote(m.id)}
-                                                style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--error)' }}
+                                                style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--danger)' }}
                                             >
                                                 ✕
                                             </button>

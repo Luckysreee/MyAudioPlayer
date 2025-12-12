@@ -16,7 +16,8 @@ const AudioPlayer = ({
     currentFileIndex,
     playFile,
     handleDelete,
-    handleClearAll
+    handleClearAll,
+    dragHandlers
 }) => {
 
     // Shared Audio Context
@@ -25,7 +26,7 @@ const AudioPlayer = ({
 
     // -- PLAYER STATE --
     const audioRef = useRef(null);
-    const sourceRef = useRef(null); // MediaElementSource
+    const sourceRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -44,8 +45,6 @@ const AudioPlayer = ({
 
     // Common State
     const [volume, setVolume] = useState(0.5);
-    const [isLightTheme, setIsLightTheme] = useState(false);
-    const [zoomLevel, setZoomLevel] = useState(1);
     const [analyserNode, setAnalyserNode] = useState(null);
 
     // Initialize Audio Context once
@@ -64,29 +63,27 @@ const AudioPlayer = ({
         };
     }, []);
 
-    // Theme & Zoom Handlers (Controlled by App or here? Requirements said "Audio Controls card". Theme/Zoom is global?)
-    // keeping local for now as it affects this component's render or body class
+    // BUG FIX: Stop background audio when mode changes
     useEffect(() => {
-        if (isLightTheme) document.body.classList.add('light-theme');
-        else document.body.classList.remove('light-theme');
-    }, [isLightTheme]);
+        // Player Stop
+        if (mode !== 'player' && audioRef.current) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+        }
 
-    useEffect(() => {
-        document.documentElement.style.setProperty('--base-font-size', `${16 * zoomLevel}px`);
-    }, [zoomLevel]);
+        // Synth Stop
+        if (mode !== 'synth' && isSynthPlaying) {
+            stopSynth();
+        }
 
+        // Stave Stop
+        if (mode !== 'stave' && isStavePlaying) {
+            stopStave();
+        }
+
+    }, [mode, isSynthPlaying, isStavePlaying]);
 
     // -- PLAYER LOGIC --
-    useEffect(() => {
-        // Stop player if mode changes away from player
-        if (mode !== 'player') {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                setIsPlaying(false);
-            }
-        }
-    }, [mode]);
-
     useEffect(() => {
         if (mode === 'player' && !currentFile) {
             handleStop();
@@ -193,30 +190,14 @@ const AudioPlayer = ({
 
     const stopSynth = () => {
         if (oscillatorRef.current) {
-            oscillatorRef.current.stop();
-            oscillatorRef.current.disconnect();
+            try { oscillatorRef.current.stop(); } catch (e) { }
+            try { oscillatorRef.current.disconnect(); } catch (e) { }
         }
         if (gainNodeRef.current) {
-            gainNodeRef.current.disconnect();
+            try { gainNodeRef.current.disconnect(); } catch (e) { }
         }
         setIsSynthPlaying(false);
     };
-
-    useEffect(() => {
-        if (mode === 'synth' && isSynthPlaying) {
-            stopSynth();
-            const timer = setTimeout(() => {
-                startSynth();
-            }, 10);
-            return () => clearTimeout(timer);
-        }
-    }, [waveform]);
-
-    useEffect(() => {
-        if (mode === 'synth' && isSynthPlaying && oscillatorRef.current && oscillatorRef.current.frequency) {
-            oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-        }
-    }, [frequency]);
 
     // -- STAVE LOGIC --
     const playStave = () => {
@@ -233,9 +214,7 @@ const AudioPlayer = ({
         const activeNodes = [];
 
         melody.forEach(m => {
-            const noteName = m.note; // Stave input handles # internally? No, separate props.
-            const acc = m.accidental || '';
-            const fullNote = noteName + acc;
+            const fullNote = m.note + (m.accidental || '');
             const oct = m.octave;
             const dur = m.duration;
 
@@ -291,17 +270,113 @@ const AudioPlayer = ({
         setIsStavePlaying(false);
     };
 
-    // Stop all on global stop?
-    // Changing tabs (mode) triggers stop in effects above.
+    // -- RENDERERS (Grid Layout) --
 
-    const handleVolumeChange = (e) => {
-        const vol = Number(e.target.value);
-        setVolume(vol);
-        if (audioRef.current) audioRef.current.volume = vol;
-        if (gainNodeRef.current) {
-            gainNodeRef.current.gain.setValueAtTime(vol, audioContextRef.current.currentTime);
-        }
-    };
+    // PLAYER MODE
+    const renderPlayerMode = () => (
+        <>
+            <div className="card left-panel" {...dragHandlers} style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="visualizer-container mb-4">
+                    <Visualizer analyser={analyserNode} isPlaying={isPlaying} />
+                </div>
+
+                <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {currentFile ? currentFile.name : translations.noFileSelected}
+                </h2>
+
+                <audio
+                    ref={audioRef}
+                    onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
+                    onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
+                    onEnded={onEnded}
+                    crossOrigin="anonymous"
+                />
+
+                <div style={{ marginTop: 'auto' }}>
+                    <div className="flex-between" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                    </div>
+                    <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        value={currentTime}
+                        onChange={(e) => {
+                            const time = Number(e.target.value);
+                            if (audioRef.current) {
+                                audioRef.current.currentTime = time;
+                                setCurrentTime(time);
+                            }
+                        }}
+                    />
+
+                    <div className="flex-center gap-md mt-4">
+                        <button onClick={onPrev} disabled={!currentFile} className="btn-secondary">⏮</button>
+                        <button onClick={togglePlay} disabled={!currentFile} className="btn-primary">
+                            {isPlaying ? '⏸' : '▶'}
+                        </button>
+                        <button onClick={onNext} disabled={!currentFile} className="btn-secondary">⏭</button>
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                        <button onClick={handleStop} disabled={!currentFile} className="btn-secondary" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}>
+                            ⏹ {translations.reset || "Param"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="card right-panel">
+                <Playlist
+                    files={files}
+                    currentFileIndex={currentFileIndex}
+                    onPlay={playFile}
+                    onReorder={() => { }}
+                    onDelete={handleDelete}
+                    onClearAll={handleClearAll}
+                    translations={translations}
+                />
+            </div>
+        </>
+    );
+
+    // SYNTH MODE
+    const renderSynthMode = () => (
+        <>
+            <div className="card left-panel">
+                <SynthControls
+                    frequency={frequency}
+                    setFrequency={setFrequency}
+                    waveform={waveform}
+                    setWaveform={setWaveform}
+                    volume={volume}
+                    onVolumeChange={handleVolumeChange} // WIRED PROPERLY
+                    isPlaying={isSynthPlaying}
+                    onStart={startSynth}
+                    onStop={stopSynth}
+                    translations={translations}
+                />
+            </div>
+            <div className="card right-panel flex-center" style={{ background: '#000' }}>
+                <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
+            </div>
+        </>
+    );
+
+    // STAVE MODE
+    const renderStaveMode = () => (
+        <>
+            <div className="card full-width">
+                <StaveInput
+                    melody={melody}
+                    setMelody={setMelody}
+                    onPlay={playStave}
+                    isPlaying={isStavePlaying}
+                    translations={translations}
+                />
+            </div>
+        </>
+    );
 
     const formatTime = (time) => {
         if (isNaN(time)) return "0:00";
@@ -310,155 +385,19 @@ const AudioPlayer = ({
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
-    // RENDER HELPERS
-    const renderGlobalControls = () => (
-        <div className="card control-card">
-            <div className="control-group">
-                <label>{translations.volume}</label>
-                <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    className="slider"
-                />
-            </div>
-
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <div className="control-group" style={{ flex: 1 }}>
-                    <label>{translations.theme}</label>
-                    <button onClick={() => setIsLightTheme(!isLightTheme)} className="btn-secondary" style={{ width: '100%', margin: 0 }}>
-                        {isLightTheme ? 'Dark Mode' : 'Light Mode'}
-                    </button>
-                </div>
-
-                <div className="control-group" style={{ flex: 1 }}>
-                    <label>{translations.zoom}</label>
-                    <input
-                        type="range"
-                        min="0.8"
-                        max="2"
-                        step="0.1"
-                        value={zoomLevel}
-                        onChange={(e) => setZoomLevel(Number(e.target.value))}
-                        className="slider"
-                    />
-                </div>
-            </div>
-        </div>
-    );
+    const handleVolumeChange = (e) => {
+        const vol = Number(e.target.value);
+        setVolume(vol);
+        if (audioRef.current) audioRef.current.volume = vol;
+        if (gainNodeRef.current) gainNodeRef.current.gain.setValueAtTime(vol, audioContextRef.current.currentTime);
+    };
 
     return (
-        <div className="audio-player-container">
-            {/* 1. VISUALIZER CARD (Always Visible) */}
-            <div className="visualizer-container mb-4">
-                <Visualizer analyser={analyserNode} isPlaying={isPlaying || isSynthPlaying || isStavePlaying} />
-            </div>
-
-            {/* 2. MODE SPECIFIC CONTENT */}
-
-            {mode === 'player' && (
-                <>
-                    <div className="card player-controls">
-                        <h3>{currentFile ? currentFile.name : translations.noFileSelected}</h3>
-
-                        <audio
-                            ref={audioRef}
-                            onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
-                            onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
-                            onEnded={onEnded}
-                            crossOrigin="anonymous"
-                        />
-
-                        <div className="controls-layout" style={{ textAlign: 'center' }}>
-                            {/* Time Slider */}
-                            <div className="time-slider-wrapper">
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max={duration || 0}
-                                    value={currentTime}
-                                    onChange={(e) => {
-                                        const time = Number(e.target.value);
-                                        if (audioRef.current) {
-                                            audioRef.current.currentTime = time;
-                                            setCurrentTime(time);
-                                        }
-                                    }}
-                                    disabled={!currentFile}
-                                    className="slider"
-                                />
-                                <div className="time-display flex-between" style={{ fontSize: '0.9rem', opacity: 0.7 }}>
-                                    <span>{formatTime(currentTime)}</span>
-                                    <span>{formatTime(duration)}</span>
-                                </div>
-                            </div>
-
-                            {/* Main Buttons */}
-                            <div className="main-actions flex-center gap-md mt-4">
-                                <button onClick={onPrev} disabled={!currentFile} className="btn-secondary">⏮</button>
-
-                                <button onClick={togglePlay} disabled={!currentFile} className="btn-primary">
-                                    {isPlaying ? '⏸' : '▶'}
-                                </button>
-
-                                <button onClick={onNext} disabled={!currentFile} className="btn-secondary">⏭</button>
-                            </div>
-
-                            <div className="mt-4">
-                                <button onClick={handleStop} disabled={!currentFile} className="btn-secondary">
-                                    ⟲ {translations.reset || "Replay"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Playlist
-                        files={files}
-                        currentFileIndex={currentFileIndex}
-                        onPlay={playFile}
-                        onReorder={() => { }} // TODO if needed
-                        onDelete={handleDelete}
-                        onClearAll={handleClearAll}
-                        translations={translations}
-                    />
-                </>
-            )}
-
-            {mode === 'synth' && (
-                <div className="card synth-card">
-                    <SynthControls
-                        frequency={frequency}
-                        setFrequency={setFrequency}
-                        waveform={waveform}
-                        setWaveform={setWaveform}
-                        volume={volume}
-                        isPlaying={isSynthPlaying}
-                        onStart={startSynth}
-                        onStop={stopSynth}
-                        translations={translations}
-                    />
-                </div>
-            )}
-
-            {mode === 'stave' && (
-                <div className="card stave-card">
-                    <StaveInput
-                        melody={melody}
-                        setMelody={setMelody}
-                        onPlay={playStave}
-                        isPlaying={isStavePlaying}
-                        translations={translations}
-                    />
-                </div>
-            )}
-
-            {/* 3. GLOBAL CONTROLS CARD */}
-            {renderGlobalControls()}
-
-        </div>
+        <>
+            {mode === 'player' && renderPlayerMode()}
+            {mode === 'synth' && renderSynthMode()}
+            {mode === 'stave' && renderStaveMode()}
+        </>
     );
 };
 
