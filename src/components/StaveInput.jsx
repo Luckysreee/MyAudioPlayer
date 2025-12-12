@@ -230,7 +230,7 @@ const StaveInput = ({ melody, setMelody, translations }) => {
                             onChange={handleTextChange}
                             placeholder="C4 0.5&#10;E4 0.5"
                             className="no-drag"
-                            style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--primary-color)', background: 'var(--surface-color)', color: 'var(--text-color)' }}
+                            style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--primary-color)', background: 'var(--surface-color)', color: 'var(--text-color)', boxSizing: 'border-box' }}
                         />
                         {error && <div style={{ color: 'var(--error-color)', margin: '0.5rem 0' }}>{error}</div>}
                         <button onClick={handleTextSubmit} className="btn-secondary mt-4" style={{ width: '100%' }}>{translations.addNote || "Add Notes"}</button>
