@@ -30,10 +30,10 @@ const SynthControls = ({
                     style={{
                         width: '100%',
                         padding: '0.5rem',
-                        background: 'var(--bg-element)',
-                        border: '1px solid var(--border-subtle)',
+                        background: 'var(--surface-color)',
+                        border: '1px solid var(--primary-color)',
                         borderRadius: '6px',
-                        color: 'var(--text-main)',
+                        color: 'var(--text-color)',
                         outline: 'none',
                         cursor: 'pointer'
                     }}
@@ -53,7 +53,7 @@ const SynthControls = ({
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <div className="flex-between" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                         <label>{translations.frequency || "Frequency"}</label>
-                        <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{frequency} Hz</span>
+                        <span style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>{frequency} Hz</span>
                     </div>
                     <input
                         type="range"
@@ -71,7 +71,7 @@ const SynthControls = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div className="flex-between" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                     <label>{translations.volume || "Volume"}</label>
-                    <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{Math.round(volume * 100)}%</span>
+                    <span style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>{Math.round(volume * 100)}%</span>
                 </div>
                 <input
                     type="range"
@@ -95,10 +95,10 @@ const SynthControls = ({
                         height: '45px',
                         borderRadius: '8px',
                         fontSize: '0.9rem',
-                        background: isPlaying ? 'var(--danger)' : 'var(--bg-element)',
-                        borderColor: isPlaying ? 'var(--danger)' : 'var(--primary)',
-                        color: isPlaying ? '#fff' : 'var(--primary)',
-                        boxShadow: isPlaying ? 'none' : 'var(--neon-glow)'
+                        background: isPlaying ? 'var(--error-color)' : 'var(--surface-color)',
+                        borderColor: isPlaying ? 'var(--error-color)' : 'var(--primary-color)',
+                        color: isPlaying ? '#fff' : 'var(--primary-color)',
+                        boxShadow: isPlaying ? 'none' : '0 0 10px rgba(0,0,0,0.2)'
                     }}
                 >
                     {isPlaying ? (translations.stopSound || "Stop Sound") : (translations.startSound || "Start Sound")}
