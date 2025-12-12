@@ -38,6 +38,10 @@ const AudioPlayer = ({
     const [waveform, setWaveform] = useState('sine');
     const [isSynthPlaying, setIsSynthPlaying] = useState(false);
 
+    // Stave/Melody State
+    const [melody, setMelody] = useState([]);
+    const [isStavePlaying, setIsStavePlaying] = useState(false);
+
     // Global Volume
     const [volume, setVolume] = useState(0.5);
     const [analyserNode, setAnalyserNode] = useState(null);
@@ -58,8 +62,90 @@ const AudioPlayer = ({
         gainNode.connect(analyser); // Connect Synth to Analyser
         gainNodeRef.current = gainNode;
 
-        return () => ctx.close();
+        return () => {
+            if (ctx.state !== 'closed') ctx.close();
+        };
     }, []);
+
+    // SYNTH LOGIC
+    useEffect(() => {
+        if (isSynthPlaying && audioContextRef.current && gainNodeRef.current) {
+            // Stop existing if any (oscillator nodes can't be reused)
+            if (oscillatorRef.current) {
+                try { oscillatorRef.current.stop(); } catch (e) { }
+            }
+
+            const osc = audioContextRef.current.createOscillator();
+            osc.type = waveform;
+            osc.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+            osc.connect(gainNodeRef.current);
+            osc.start();
+            oscillatorRef.current = osc;
+        } else {
+            if (oscillatorRef.current) {
+                try { oscillatorRef.current.stop(); } catch (e) { }
+                oscillatorRef.current = null;
+            }
+        }
+    }, [isSynthPlaying, waveform]);
+
+    // Live Frequency Update
+    useEffect(() => {
+        if (oscillatorRef.current && isSynthPlaying) {
+            oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        }
+    }, [frequency, isSynthPlaying]);
+
+    // STAVE LOGIC
+    const playMelody = () => {
+        if (!audioContextRef.current || melody.length === 0) return;
+
+        if (isStavePlaying) {
+            // Stop functionality if needed, for now just reset
+            setIsStavePlaying(false);
+            return;
+        }
+
+        setIsStavePlaying(true);
+        const ctx = audioContextRef.current;
+        const now = ctx.currentTime;
+        let accumulator = 0;
+
+        melody.forEach(m => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            // Simple Note to Freq converter
+            // C4 = 261.63
+            // This is a naive implementation, ideally use a library or proper map
+            // For demo: verify 'm.note', 'm.octave'
+            // ... (Logic placeholder, implementing simple frequency calculation)
+
+            // Basic frequency map for C4-B4
+            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const semitones = notes.indexOf(m.note + (m.accidental || ''));
+            if (semitones !== -1) {
+                const baseFreq = 261.63 * Math.pow(2, (m.octave - 4));
+                const freq = baseFreq * Math.pow(2, semitones / 12);
+                osc.frequency.value = freq;
+            }
+
+            osc.type = 'triangle';
+            osc.connect(gain);
+            gain.connect(analyserRef.current);
+
+            gain.gain.setValueAtTime(0.5, now + accumulator);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + accumulator + m.duration - 0.05);
+
+            osc.start(now + accumulator);
+            osc.stop(now + accumulator + m.duration);
+
+            accumulator += m.duration;
+        });
+
+        // Reset playing state after melody
+        setTimeout(() => setIsStavePlaying(false), accumulator * 1000);
+    };
 
     // Handle File Playback
     useEffect(() => {
@@ -233,11 +319,16 @@ const AudioPlayer = ({
             initialSize={{ width: '600px', height: 'auto' }}
         >
             <SynthControls
-                audioContext={audioContextRef.current}
-                gainNode={gainNodeRef.current}
-                analyser={analyserNode}
-                isSynthPlaying={isSynthPlaying}
-                setIsSynthPlaying={setIsSynthPlaying}
+                frequency={frequency}
+                setFrequency={setFrequency}
+                waveform={waveform}
+                setWaveform={setWaveform}
+                volume={volume}
+                onVolumeChange={handleVolumeChange}
+                isPlaying={isSynthPlaying}
+                onStart={() => setIsSynthPlaying(true)}
+                onStop={() => setIsSynthPlaying(false)}
+                translations={translations}
             />
         </DraggableCard>
     );
@@ -248,7 +339,13 @@ const AudioPlayer = ({
             initialPos={{ x: '16px', y: '16px' }}
             initialSize={{ width: 'calc(100% - 32px)', height: '600px' }}
         >
-            <StaveInput audioContext={audioContextRef.current} />
+            <StaveInput
+                melody={melody}
+                setMelody={setMelody}
+                onPlay={playMelody}
+                isPlaying={isStavePlaying}
+                translations={translations}
+            />
         </DraggableCard>
     );
 
