@@ -38,7 +38,7 @@ export const MelodyTable = ({ melody, onDelete, translations }) => (
         {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
             <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead style={{ background: 'rgba(255,255,255,0.05)', position: 'sticky', top: 0 }}>
+                    <thead style={{ background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 1 }}>
                         <tr>
                             <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
                             <th style={{ padding: '8px', textAlign: 'left' }}>Oct</th>
