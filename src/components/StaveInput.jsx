@@ -93,7 +93,13 @@ export const MelodyTable = ({ melody, onDelete, translations, currentNoteIndex =
             )}
         </div>
     );
+};
 
+// 3. MAIN EDITOR (Input Modes)
+const StaveInput = ({ melody, setMelody, translations }) => {
+    const [inputMode, setInputMode] = useState('piano'); // 'text', 'builder', 'piano'
+    const [textInput, setTextInput] = useState('');
+    const [error, setError] = useState('');
     // Builder State
     const [note, setNote] = useState('C');
     const [accidental, setAccidental] = useState('');
