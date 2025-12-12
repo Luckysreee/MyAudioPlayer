@@ -354,11 +354,11 @@ const AudioPlayer = ({
 
     const renderStaveMode = () => (
         <>
-            {/* Card 1: Stave Input (Top Center-Left) */}
+            {/* Card 1: Stave Input (Top Left) */}
             <DraggableCard
                 title={translations.staveInput}
                 initialPos={{ x: '16px', y: '16px' }}
-                initialSize={{ width: '40%', height: '350px' }}
+                initialSize={{ width: '48%', height: '480px' }}
                 className="stave-editor-card"
             >
                 <StaveInput
@@ -370,16 +370,25 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 2: Controls & Visualizer (Bottom Center-Left) */}
+            {/* Card 2: Visualizer (Bottom Left) */}
             <DraggableCard
-                title={translations.controls || "Controls"}
-                initialPos={{ x: '16px', y: '382px' }}
-                initialSize={{ width: '40%', height: 'calc(100% - 392px)' }}
-                className="stave-controls-card"
+                title={translations.visualizer || "Visualizer"}
+                initialPos={{ x: '16px', y: '512px' }}
+                initialSize={{ width: '24%', height: 'calc(100% - 522px)' }}
+                className="stave-visualizer-card"
             >
-                <div className="visualizer-container" style={{ width: '100%', height: '120px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
                 </div>
+            </DraggableCard>
+
+            {/* Card 3: Controls (Bottom Center-Left) */}
+            <DraggableCard
+                title={translations.controls || "Controls"}
+                initialPos={{ x: 'calc(24% + 32px)', y: '512px' }}
+                initialSize={{ width: '24%', height: 'calc(100% - 522px)' }}
+                className="stave-controls-card"
+            >
                 <StaveControls
                     onPlay={playMelody}
                     isPlaying={isStavePlaying}
