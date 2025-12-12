@@ -167,6 +167,7 @@ function App() {
                         handleClearAll={handleClearAll}
                         dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
                         onUploadClick={triggerFileUpload}
+                        onReorder={handleReorder}
                     />
                 </div>
             </main>
