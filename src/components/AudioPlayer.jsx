@@ -97,13 +97,26 @@ const AudioPlayer = ({
     }, [frequency, isSynthPlaying]);
 
     // STAVE LOGIC
+    const timeoutIdRef = useRef(null);
+    const shouldContinueRef = useRef(false);
+
     const playMelody = () => {
         if (isStavePlaying) {
             // Stop playback
             setIsStavePlaying(false);
+            shouldContinueRef.current = false;
+
             if (oscillatorRef.current) {
-                oscillatorRef.current.stop();
+                try {
+                    oscillatorRef.current.stop();
+                } catch (e) {
+                    // Oscillator may already be stopped
+                }
                 oscillatorRef.current = null;
+            }
+            if (timeoutIdRef.current) {
+                clearTimeout(timeoutIdRef.current);
+                timeoutIdRef.current = null;
             }
             return;
         }
@@ -111,11 +124,15 @@ const AudioPlayer = ({
         if (!melody.length || !gainNodeRef.current) return;
 
         setIsStavePlaying(true);
+        shouldContinueRef.current = true;
         let idx = 0;
 
         const playNext = () => {
-            if (idx >= melody.length || !gainNodeRef.current) {
+            if (idx >= melody.length || !gainNodeRef.current || !shouldContinueRef.current) {
                 setIsStavePlaying(false);
+                shouldContinueRef.current = false;
+                oscillatorRef.current = null;
+                timeoutIdRef.current = null;
                 return;
             }
 
@@ -133,13 +150,27 @@ const AudioPlayer = ({
             osc.type = 'sine';
             osc.frequency.value = noteFreq;
             osc.connect(gainNodeRef.current);
+
+            // Apply volume
+            if (gainNodeRef.current.gain) {
+                gainNodeRef.current.gain.value = volume;
+            }
+
             osc.start();
             oscillatorRef.current = osc;
 
-            setTimeout(() => {
-                osc.stop();
+            timeoutIdRef.current = setTimeout(() => {
+                if (oscillatorRef.current) {
+                    try {
+                        oscillatorRef.current.stop();
+                    } catch (e) {
+                        // Already stopped
+                    }
+                }
                 idx++;
-                playNext();
+                if (shouldContinueRef.current) {
+                    playNext();
+                }
             }, m.duration * 1000);
         };
 
