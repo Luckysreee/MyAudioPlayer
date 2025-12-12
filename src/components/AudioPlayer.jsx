@@ -358,7 +358,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.staveInput}
                 initialPos={{ x: '16px', y: '16px' }}
-                initialSize={{ width: '420px', height: '480px' }}
+                initialSize={{ width: '480px', height: '480px' }}
                 className="stave-editor-card"
             >
                 <StaveInput
@@ -374,7 +374,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.controls || "Controls"}
                 initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '420px', height: 'calc(100% - 522px)' }}
+                initialSize={{ width: '480px', height: 'calc(100% - 522px)' }}
                 className="stave-controls-card"
             >
                 <StaveControls
@@ -389,7 +389,7 @@ const AudioPlayer = ({
             {/* Card 3: Visualizer (Center, between left and right) */}
             <DraggableCard
                 title={translations.visualizer || "Visualizer"}
-                initialPos={{ x: '452px', y: '16px' }}
+                initialPos={{ x: '512px', y: '16px' }}
                 initialSize={{ width: '300px', height: 'calc(100% - 26px)' }}
                 className="stave-visualizer-card"
             >
