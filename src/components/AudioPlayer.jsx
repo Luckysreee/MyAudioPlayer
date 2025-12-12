@@ -358,7 +358,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.staveInput}
                 initialPos={{ x: '16px', y: '16px' }}
-                initialSize={{ width: '48%', height: '480px' }}
+                initialSize={{ width: '420px', height: '480px' }}
                 className="stave-editor-card"
             >
                 <StaveInput
@@ -370,23 +370,11 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 2: Visualizer (Bottom Left) */}
-            <DraggableCard
-                title={translations.visualizer || "Visualizer"}
-                initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '24%', height: 'calc(100% - 522px)' }}
-                className="stave-visualizer-card"
-            >
-                <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
-                </div>
-            </DraggableCard>
-
-            {/* Card 3: Controls (Bottom Center-Left) */}
+            {/* Card 2: Controls (Bottom Left, beneath Stave Input) */}
             <DraggableCard
                 title={translations.controls || "Controls"}
-                initialPos={{ x: 'calc(24% + 32px)', y: '512px' }}
-                initialSize={{ width: '24%', height: 'calc(100% - 522px)' }}
+                initialPos={{ x: '16px', y: '512px' }}
+                initialSize={{ width: '420px', height: 'calc(100% - 522px)' }}
                 className="stave-controls-card"
             >
                 <StaveControls
@@ -398,7 +386,19 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 3: Melody Table (Right Sidebar) */}
+            {/* Card 3: Visualizer (Center, between left and right) */}
+            <DraggableCard
+                title={translations.visualizer || "Visualizer"}
+                initialPos={{ x: '452px', y: '16px' }}
+                initialSize={{ width: '300px', height: 'calc(100% - 26px)' }}
+                className="stave-visualizer-card"
+            >
+                <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
+                </div>
+            </DraggableCard>
+
+            {/* Card 4: Melody Table (Right) */}
             <DraggableCard
                 title={translations.melody || "Melody"}
                 initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
