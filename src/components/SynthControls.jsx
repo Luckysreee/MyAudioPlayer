@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 const SynthControls = ({
     frequency,
@@ -12,36 +12,33 @@ const SynthControls = ({
     onStop,
     translations
 }) => {
-    // ...
-    <div className="mb-4">
-        <div className="flex-between">
-            <label>{translations.volume || "Volume"}</label>
-            <span>{Math.round(volume * 100)}%</span>
-        </div>
-        <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={onVolumeChange}
-        />
-    </div>
-    const isNoise = waveform === 'white-noise' || waveform === 'pink-noise';
 
-    const handleWaveformChange = (e) => {
-        setWaveform(e.target.value);
-    };
-
-    const handleFrequencyChange = (e) => {
-        setFrequency(Number(e.target.value));
-    };
+    // Canvas ref for potential small visualizer or just decor
+    const canvasRef = useRef(null);
 
     return (
-        <div className="synth-controls-wrapper">
-            <div className="flex-between mb-4">
-                <label className="text-large">{translations.waveform}</label>
-                <select value={waveform} onChange={handleWaveformChange} style={{ maxWidth: '200px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+            {/* Waveform Selector */}
+            <div className="control-group">
+                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                    {translations.waveform || "Waveform"}
+                </label>
+                <select
+                    value={waveform}
+                    onChange={(e) => setWaveform(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        background: 'var(--bg-element)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        color: 'var(--text-main)',
+                        outline: 'none',
+                        cursor: 'pointer'
+                    }}
+                    className="no-drag"
+                >
                     <option value="sine">Sine</option>
                     <option value="square">Square</option>
                     <option value="sawtooth">Sawtooth</option>
@@ -51,26 +48,29 @@ const SynthControls = ({
                 </select>
             </div>
 
-            {!isNoise && (
-                <div className="mb-4">
-                    <div className="flex-between">
-                        <label>{translations.frequency}</label>
-                        <span>{frequency} Hz</span>
+            {/* Slider: Frequency (Only for oscillators) */}
+            {!waveform.includes('noise') && (
+                <div className="control-group">
+                    <div className="flex-between" style={{ fontSize: '0.8rem', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
+                        <label>{translations.frequency || "Frequency"}</label>
+                        <span style={{ color: 'var(--primary)' }}>{frequency} Hz</span>
                     </div>
                     <input
                         type="range"
-                        min="50"
+                        min="20"
                         max="2000"
                         value={frequency}
-                        onChange={handleFrequencyChange}
+                        onChange={(e) => setFrequency(Number(e.target.value))}
+                        className="no-drag"
                     />
                 </div>
             )}
 
-            <div className="mb-4">
-                <div className="flex-between">
+            {/* Slider: Volume */}
+            <div className="control-group">
+                <div className="flex-between" style={{ fontSize: '0.8rem', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
                     <label>{translations.volume || "Volume"}</label>
-                    <span>{Math.round(volume * 100)}%</span>
+                    <span style={{ color: 'var(--primary)' }}>{Math.round(volume * 100)}%</span>
                 </div>
                 <input
                     type="range"
@@ -79,19 +79,30 @@ const SynthControls = ({
                     step="0.01"
                     value={volume}
                     onChange={onVolumeChange}
+                    className="no-drag"
                 />
             </div>
 
-            <div className="flex-center mt-4">
-                {!isPlaying ? (
-                    <button onClick={onStart} className="btn-primary">▶</button>
-                ) : (
-                    <button onClick={onStop} className="btn-primary" style={{ background: 'var(--danger)', borderColor: 'var(--danger)' }}>⏹</button>
-                )}
+            {/* Play Button */}
+            <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button
+                    onClick={isPlaying ? onStop : onStart}
+                    className="btn-primary"
+                    style={{
+                        width: '100%',
+                        height: '45px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        background: isPlaying ? 'var(--danger)' : 'var(--bg-element)',
+                        borderColor: isPlaying ? 'var(--danger)' : 'var(--primary)',
+                        color: isPlaying ? '#fff' : 'var(--primary)',
+                        boxShadow: isPlaying ? 'none' : 'var(--neon-glow)'
+                    }}
+                >
+                    {isPlaying ? (translations.stopSound || "Stop Sound") : (translations.startSound || "Start Sound")}
+                </button>
             </div>
-            <p style={{ textAlign: 'center', marginTop: '1rem', opacity: 0.7 }}>
-                {isPlaying ? translations.stopSound : translations.startSound}
-            </p>
+
         </div>
     );
 };
