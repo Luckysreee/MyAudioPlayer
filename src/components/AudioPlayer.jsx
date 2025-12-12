@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Visualizer from './Visualizer';
+import SynthControls from './SynthControls';
+import StaveInput from './StaveInput';
 
 const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => {
-    // Mode State: 'player' or 'synth'
-    const [mode, setMode] = useState('player'); // Default to player if file exists?
+    // Mode State: 'player', 'synth', 'stave'
+    const [mode, setMode] = useState('player');
 
     // Shared Audio Context
     const audioContextRef = useRef(null);
@@ -17,17 +19,22 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
     const [duration, setDuration] = useState(0);
 
     // -- SYNTH STATE --
-    const oscillatorRef = useRef(null);
+    const oscillatorRef = useRef(null); // Can hold OscillatorNode OR AudioBufferSourceNode
     const gainNodeRef = useRef(null);
     const [frequency, setFrequency] = useState(440);
     const [waveform, setWaveform] = useState('sine');
     const [isSynthPlaying, setIsSynthPlaying] = useState(false);
 
+    // -- STAVE STATE --
+    const [melody, setMelody] = useState([]);
+    const [isStavePlaying, setIsStavePlaying] = useState(false);
+    const staveNodesRef = useRef([]); // To track active nodes for cancellation
+
     // Common State
     const [volume, setVolume] = useState(0.5);
     const [isLightTheme, setIsLightTheme] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [analyserNode, setAnalyserNode] = useState(null); // To pass to Visualizer
+    const [analyserNode, setAnalyserNode] = useState(null);
 
     // Initialize Audio Context once
     useEffect(() => {
@@ -58,19 +65,29 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
 
     // -- PLAYER LOGIC --
     useEffect(() => {
+        // If file deleted or cleared, stop player
+        if (mode === 'player' && !currentFile) {
+            handleStop();
+            return; // nothing else to do
+        }
+
         if (mode === 'player' && currentFile && audioRef.current && audioContextRef.current) {
             const url = URL.createObjectURL(currentFile);
             audioRef.current.src = url;
 
-            // Connect Audio Element to Analyser
+            // Connect Audio Element to Analyser (if not already connected)
             if (!sourceRef.current) {
                 try {
                     const source = audioContextRef.current.createMediaElementSource(audioRef.current);
                     source.connect(analyserRef.current);
                     sourceRef.current = source;
-                } catch (e) { console.error(e) }
+                } catch (e) {
+                    // Already connected or error
+                    console.log(e);
+                }
             }
 
+            // Play new track
             audioRef.current.play()
                 .then(() => setIsPlaying(true))
                 .catch(e => console.error("Playback failed", e));
@@ -79,15 +96,17 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
                 URL.revokeObjectURL(url);
                 setIsPlaying(false);
             };
-        } else if (mode === 'synth') {
-            // Pause player if switching to synth
-            if (audioRef.current) audioRef.current.pause();
-            setIsPlaying(false);
+        } else {
+            // If switching away from player, or player mode but no file
+            if (audioRef.current) {
+                audioRef.current.pause();
+                setIsPlaying(false);
+            }
         }
     }, [currentFile, mode]);
 
     const togglePlay = () => {
-        if (!audioRef.current) return;
+        if (!audioRef.current || !currentFile) return;
         if (audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
 
         if (isPlaying) {
@@ -99,32 +118,69 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
     };
 
     const handleStop = () => {
-        if (!audioRef.current) return;
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
         setIsPlaying(false);
+    };
+
+    // -- AUDIO HELPERS --
+    const createNoiseBuffer = (type) => {
+        const ctx = audioContextRef.current;
+        const bufferSize = ctx.sampleRate * 2; // 2 sec buffer
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = buffer.getChannelData(0);
+
+        if (type === 'pink-noise') {
+            // Paul Kellett's refined method
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11;
+                b6 = white * 0.115926;
+            }
+        } else {
+            // White noise
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+        }
+        return buffer;
     };
 
     // -- SYNTH LOGIC --
     const startSynth = () => {
         if (audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
-
         const ctx = audioContextRef.current;
-        const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-
-        osc.type = waveform;
-        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
         gain.gain.setValueAtTime(volume, ctx.currentTime);
-
-        // Connect Synth to Analyser
-        osc.connect(gain);
         gain.connect(analyserRef.current);
-
-        osc.start();
-        oscillatorRef.current = osc;
         gainNodeRef.current = gain;
 
+        let source;
+        if (waveform === 'white-noise' || waveform === 'pink-noise') {
+            // Noise
+            source = ctx.createBufferSource();
+            source.buffer = createNoiseBuffer(waveform);
+            source.loop = true;
+        } else {
+            // Oscillator
+            source = ctx.createOscillator();
+            source.type = waveform;
+            source.frequency.setValueAtTime(frequency, ctx.currentTime);
+        }
+
+        source.connect(gain);
+        source.start();
+        oscillatorRef.current = source;
         setIsSynthPlaying(true);
     };
 
@@ -139,20 +195,160 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
         setIsSynthPlaying(false);
     };
 
-    const handleFrequencyChange = (e) => {
-        const val = Number(e.target.value);
-        setFrequency(val);
-        if (oscillatorRef.current) {
-            oscillatorRef.current.frequency.setValueAtTime(val, audioContextRef.current.currentTime);
+    const handleSynthWaveformChange = (val) => {
+        setWaveform(val);
+        // If playing, restart to apply new type (necessary if switching osc <-> noise)
+        if (isSynthPlaying) {
+            stopSynth();
+            // small timeout to allow state update or immediate restart? 
+            // React state update is async, but 'val' is passed here. 
+            // We need to wait for state to settle? No, we can pass 'val' to startSynth directly 
+            // BUT startSynth reads from 'waveform' state. 
+            // Helper wrapping:
+            setTimeout(() => {
+                // Hacky but simplest to ensure state is set. 
+                // Better: Pass config to startSynth
+                // Even better: User clicks start again or we auto-restart
+            }, 0);
+            // Since we use state in startSynth, we should let the user restart or use effect?
+            // Let's just stop it. User can restart.
+            // OR: We force it.
         }
     };
 
-    const handleWaveformChange = (e) => {
-        const val = e.target.value;
-        setWaveform(val);
-        if (oscillatorRef.current) {
-            oscillatorRef.current.type = val;
+    // Use Effect to handle waveform switch if playing? 
+    // Actually, 'setWaveform' from SynthControls calls setWaveform. 
+    // If we want auto-update:
+    useEffect(() => {
+        if (mode === 'synth' && isSynthPlaying) {
+            stopSynth();
+            // We need to restart with NEW waveform. 
+            // Problem: startSynth reads 'waveform'. 'waveform' is updated.
+            // But we need to make sure we don't create loop.
+            // Let's just create a ref for immediate access? Or use timeout.
+            const timer = setTimeout(() => {
+                startSynth();
+            }, 10);
+            return () => clearTimeout(timer);
         }
+    }, [waveform]);
+    // Be careful: this triggers on every waveform change.
+
+    // Also frequency change
+    useEffect(() => {
+        if (mode === 'synth' && isSynthPlaying && oscillatorRef.current && oscillatorRef.current.frequency) {
+            // Only for OscillatorNode, not AudioBufferSourceNode
+            oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        }
+    }, [frequency]);
+
+
+    // -- STAVE LOGIC --
+    const getNoteFrequency = (note, octave) => {
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        // Enharmonic handling can be complex, simplifying:
+        // Input is A-G and optional #.
+        let baseIndex = notes.indexOf(note);
+        if (baseIndex === -1 && note.includes('#')) {
+            // Try split? passed note is usually "C" or "C#"
+            // If code passed "C#", index is 1.
+        }
+        // Actually, note comes split from StaveInput as 'C' and '#'
+
+        // Let's re-parse or assume 'note' arg is e.g. "C" or "C#"
+        // My function signature: getNoteFrequency(noteName (e.g. C#), octave)
+
+        // Wait, StaveInput passes note parts. 
+        // Let's assume input is concatenated
+    };
+
+    const playStave = () => {
+        if (isStavePlaying) {
+            // Stop logic
+            stopStave();
+            return;
+        }
+
+        if (melody.length === 0) return;
+        if (audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
+
+        const ctx = audioContextRef.current;
+        const now = ctx.currentTime;
+        let cumulativeTime = now;
+
+        const activeNodes = [];
+
+        melody.forEach(m => {
+            const noteName = m.note + m.accidental;
+            const oct = m.octave;
+            const dur = m.duration;
+
+            // Calculate freq
+            const noteMap = { 'C': -9, 'C#': -8, 'D': -7, 'D#': -6, 'E': -5, 'F': -4, 'F#': -3, 'G': -2, 'G#': -1, 'A': 0, 'A#': 1, 'B': 2 };
+            const semitone = noteMap[noteName];
+            if (semitone === undefined) return; // skip invalid
+
+            // A4 = 440 (Octave 4)
+            // Diff from A4 = semitone + (oct - 4)*12
+            const totalSemitones = semitone + (oct - 4) * 12;
+            const freq = 440 * Math.pow(2, totalSemitones / 12);
+
+            // Create nodes
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine'; // Basic tone
+            osc.frequency.value = freq;
+
+            // Routing
+            osc.connect(gain);
+            gain.connect(analyserRef.current);
+
+            // Envelope
+            const attack = 0.05;
+            const release = 0.05;
+
+            // Schedule
+            osc.start(cumulativeTime);
+            gain.gain.setValueAtTime(0, cumulativeTime);
+            gain.gain.linearRampToValueAtTime(volume, cumulativeTime + attack);
+            gain.gain.setValueAtTime(volume, cumulativeTime + dur - release);
+            gain.gain.linearRampToValueAtTime(0, cumulativeTime + dur);
+            osc.stop(cumulativeTime + dur);
+
+            activeNodes.push({ osc, gain });
+
+            cumulativeTime += dur;
+        });
+
+        staveNodesRef.current = activeNodes;
+        setIsStavePlaying(true);
+
+        // Auto stop state when done
+        const totalDuration = cumulativeTime - now;
+        setTimeout(() => {
+            setIsStavePlaying(false);
+            staveNodesRef.current = [];
+        }, totalDuration * 1000);
+    };
+
+    const stopStave = () => {
+        staveNodesRef.current.forEach(node => {
+            try {
+                node.osc.stop();
+                node.osc.disconnect();
+                node.gain.disconnect();
+            } catch (e) { /* ignore already stopped */ }
+        });
+        staveNodesRef.current = [];
+        setIsStavePlaying(false);
+    };
+
+    // Global stop (switching modes)
+    const handleGlobalStop = () => {
+        handleStop(); // Player
+        stopSynth(); // Synth
+        stopStave(); // Stave
     };
 
 
@@ -168,7 +364,19 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
         if (gainNodeRef.current) {
             gainNodeRef.current.gain.setValueAtTime(vol, audioContextRef.current.currentTime);
         }
+
+        // Stave Volume? 
+        // Stave uses scheduled envelopes, so changing volume mid-playback is hard without iterating active nodes.
+        // For now, new notes get new volume. Real-time update for scheduled notes is complex. 
+        // We accept that limitation or try to target active gains.
+        staveNodesRef.current.forEach(n => {
+            // This cancels the envelope if we just set value.
+            // Keep simple.
+        });
     };
+
+    // Monitor mode switch to stop everything
+    // Actually handled in render select onChange.
 
     const formatTime = (time) => {
         if (isNaN(time)) return "0:00";
@@ -180,20 +388,19 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
     return (
         <div className="card audio-player">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h2>{mode === 'player' ? translations.player : translations.synthesizer}</h2>
+                <h2>{mode === 'player' ? translations.player : (mode === 'synth' ? translations.synthesizer : translations.staveInput)}</h2>
                 <select value={mode} onChange={(e) => {
+                    handleGlobalStop(); // Reset all audio
                     setMode(e.target.value);
-                    // Stop everything on switch
-                    handleStop();
-                    stopSynth();
                 }}>
                     <option value="player">{translations.player}</option>
                     <option value="synth">{translations.synthesizer}</option>
+                    <option value="stave">{translations.staveInput || "Stave Input"}</option>
                 </select>
             </div>
 
             {/* Shared Visualizer */}
-            <Visualizer analyser={analyserNode} isPlaying={isPlaying || isSynthPlaying} />
+            <Visualizer analyser={analyserNode} isPlaying={isPlaying || isSynthPlaying || isStavePlaying} />
 
             {/* --- PLAYER UI --- */}
             <div style={{ display: mode === 'player' ? 'block' : 'none' }}>
@@ -231,42 +438,36 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
                         <button onClick={togglePlay} disabled={!currentFile}>
                             {isPlaying ? translations.paused : translations.playing}
                         </button>
-                        <button onClick={handleStop} disabled={!currentFile}>⏹ {translations.stopped}</button>
+                        <button onClick={handleStop} disabled={!currentFile}>⏹ {translations.reset || "Replay"}</button>
                         <button onClick={onNext} disabled={!currentFile}>⏭</button>
                     </div>
                 </div>
             </div>
 
             {/* --- SYNTH UI --- */}
-            <div className="synth-controls" style={{ display: mode === 'synth' ? 'flex' : 'none' }}>
-                <div className="control-group">
-                    <label>{translations.waveform}</label>
-                    <select value={waveform} onChange={handleWaveformChange}>
-                        <option value="sine">Sine</option>
-                        <option value="square">Square</option>
-                        <option value="sawtooth">Sawtooth</option>
-                        <option value="triangle">Triangle</option>
-                    </select>
-                </div>
+            <div style={{ display: mode === 'synth' ? 'block' : 'none' }}>
+                <SynthControls
+                    frequency={frequency}
+                    setFrequency={setFrequency}
+                    waveform={waveform}
+                    setWaveform={setWaveform} // This will trigger Effect to restart
+                    volume={volume}
+                    isPlaying={isSynthPlaying}
+                    onStart={startSynth}
+                    onStop={stopSynth}
+                    translations={translations}
+                />
+            </div>
 
-                <div className="control-group">
-                    <label>{translations.frequency} ({frequency} Hz)</label>
-                    <input
-                        type="range"
-                        min="50"
-                        max="2000"
-                        value={frequency}
-                        onChange={handleFrequencyChange}
-                    />
-                </div>
-
-                <div className="buttons">
-                    {!isSynthPlaying ? (
-                        <button onClick={startSynth}>{translations.startSound}</button>
-                    ) : (
-                        <button onClick={stopSynth} className="stop-btn">{translations.stopSound}</button>
-                    )}
-                </div>
+            {/* --- STAVE UI --- */}
+            <div style={{ display: mode === 'stave' ? 'block' : 'none' }}>
+                <StaveInput
+                    melody={melody}
+                    setMelody={setMelody}
+                    onPlay={playStave}
+                    isPlaying={isStavePlaying}
+                    translations={translations}
+                />
             </div>
 
             <hr style={{ width: '100%', opacity: 0.2, margin: '2rem 0' }} />
@@ -301,6 +502,7 @@ const AudioPlayer = ({ currentFile, onEnded, onNext, onPrev, translations }) => 
                         step="0.1"
                         value={zoomLevel}
                         onChange={(e) => setZoomLevel(Number(e.target.value))}
+                        disabled={mode === 'synth' && false /* requirement said seek bar, not zoom */}
                     />
                 </div>
             </div>

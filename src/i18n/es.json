@@ -21,5 +21,16 @@
     "player": "Reproductor de Audio",
     "synthesizer": "Sintetizador",
     "delete": "Eliminar",
-    "clearAll": "Borrar Todo"
+    "clearAll": "Borrar Todo",
+    "staveInput": "Entrada de Pentagrama",
+    "textMode": "Modo Texto",
+    "builderMode": "Modo Constructor",
+    "addNote": "Añadir Nota",
+    "playStave": "Reproducir Pentagrama",
+    "noise": "Ruido",
+    "whiteNoise": "Ruido Blanco",
+    "pinkNoise": "Ruido Rosa",
+    "reset": "Reiniciar",
+    "invalidNote": "Formato de nota inválido",
+    "melody": "Melodía"
 }

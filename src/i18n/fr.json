@@ -21,5 +21,16 @@
     "player": "Lecteur Audio",
     "synthesizer": "Synthétiseur",
     "delete": "Supprimer",
-    "clearAll": "Tout effacer"
+    "clearAll": "Tout effacer",
+    "staveInput": "Entrée Portée",
+    "textMode": "Mode Texte",
+    "builderMode": "Mode Constructeur",
+    "addNote": "Ajouter une Note",
+    "playStave": "Jouer Portée",
+    "noise": "Bruit",
+    "whiteNoise": "Bruit Blanc",
+    "pinkNoise": "Bruit Rose",
+    "reset": "Réinitialiser",
+    "invalidNote": "Format de note invalide",
+    "melody": "Mélodie"
 }

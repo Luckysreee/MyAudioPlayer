@@ -88,10 +88,17 @@ function App() {
     const handleDrop = (e) => {
         e.preventDefault();
         e.target.classList.remove('dragging');
-        const droppedFiles = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('audio/'));
-        if (droppedFiles.length > 0) {
+
+        const allFiles = Array.from(e.dataTransfer.files);
+        const audioFiles = allFiles.filter(f => f.type.startsWith('audio/'));
+
+        if (allFiles.length !== audioFiles.length) {
+            alert("Some files were rejected because they are not audio files.");
+        }
+
+        if (audioFiles.length > 0) {
             setFiles(prev => {
-                const newFiles = [...prev, ...droppedFiles];
+                const newFiles = [...prev, ...audioFiles];
                 if (currentFileIndex === -1) setCurrentFileIndex(prev.length);
                 return newFiles;
             });

@@ -21,5 +21,16 @@
     "player": "Audio Player",
     "synthesizer": "Synthesizer",
     "delete": "Delete",
-    "clearAll": "Clear All"
+    "clearAll": "Clear All",
+    "staveInput": "Stave Input",
+    "textMode": "Text Input",
+    "builderMode": "Builder Input",
+    "addNote": "Add Note",
+    "playStave": "Play Stave",
+    "noise": "Noise",
+    "whiteNoise": "White Noise",
+    "pinkNoise": "Pink Noise",
+    "reset": "Reset",
+    "invalidNote": "Invalid note format",
+    "melody": "Melody"
 }

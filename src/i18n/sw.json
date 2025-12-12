@@ -21,5 +21,16 @@
     "player": "Kicheza Sauti",
     "synthesizer": "Sintethiza",
     "delete": "Futa",
-    "clearAll": "Futa Zote"
+    "clearAll": "Futa Zote",
+    "staveInput": "Ingizo la Stave",
+    "textMode": "Hali ya Maandishi",
+    "builderMode": "Hali ya Kujenga",
+    "addNote": "Ongeza Kumbuka",
+    "playStave": "Cheza Stave",
+    "noise": "Kelele",
+    "whiteNoise": "Kelele Nyeupe",
+    "pinkNoise": "Kelele ya Pink",
+    "reset": "Weka upya",
+    "invalidNote": "Muundo wa noti sio sahihi",
+    "melody": "Melodi"
 }
