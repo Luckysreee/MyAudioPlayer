@@ -195,55 +195,71 @@ const AudioPlayer = ({
         <>
             <DraggableCard title={translations.player} initialPos={{ x: 50, y: 50 }} className="left-panel">
                 <div {...dragHandlers}>
-                    <div className="visualizer-container mb-4">
-                        <Visualizer analyser={analyserNode} isPlaying={isPlaying} />
-                    </div>
-
-                    <h2 style={{ fontSize: '1.1rem', marginBottom: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {currentFile ? currentFile.name : translations.noFileSelected}
-                    </h2>
-
-                    <audio
-                        ref={audioRef}
-                        onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
-                        onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
-                        onEnded={onEnded}
-                        crossOrigin="anonymous"
-                    />
-
-                    <div style={{ marginTop: 'auto' }}>
-                        <div className="flex-between" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            <span>{formatTime(currentTime)}</span>
-                            <span>{formatTime(duration)}</span>
+                    {!currentFile ? (
+                        <div
+                            className="upload-zone flex-center column gap-md"
+                            style={{ minHeight: '200px' }}
+                            onClick={onUploadClick}
+                        >
+                            <div style={{ fontSize: '3rem', opacity: 0.5 }}>📁</div>
+                            <div>
+                                <h3 style={{ margin: 0 }}>{translations.upload || "Upload Audio"}</h3>
+                                <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.7 }}>Drag & drop files or click to browse</p>
+                            </div>
                         </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max={duration || 0}
-                            value={currentTime}
-                            onChange={(e) => {
-                                const time = Number(e.target.value);
-                                if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
-                            }}
-                            className="no-drag"
-                        />
+                    ) : (
+                        <>
+                            <div className="visualizer-container mb-4">
+                                <Visualizer analyser={analyserNode} isPlaying={isPlaying} />
+                            </div>
 
-                        <div className="flex-center gap-md mt-4">
-                            <button onClick={onPrev} disabled={!currentFile} className="btn-secondary">⏮</button>
-                            <button onClick={togglePlay} disabled={!currentFile} className="btn-primary">
-                                {isPlaying ? '⏸' : '▶'}
-                            </button>
-                            <button onClick={onNext} disabled={!currentFile} className="btn-secondary">⏭</button>
-                        </div>
-                        <div style={{ textAlign: 'center', marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                            <button onClick={onUploadClick} className="btn-secondary" style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }}>
-                                📁 {translations.upload || "Upload"}
-                            </button>
-                            <button onClick={handleStop} disabled={!currentFile} className="btn-secondary" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}>
-                                ⏹ {translations.reset || "Param"}
-                            </button>
-                        </div>
-                    </div>
+                            <h2 style={{ fontSize: '1.2em', marginBottom: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {currentFile.name}
+                            </h2>
+
+                            <audio
+                                ref={audioRef}
+                                onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
+                                onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
+                                onEnded={onEnded}
+                                crossOrigin="anonymous"
+                            />
+
+                            <div style={{ marginTop: 'auto' }}>
+                                <div className="flex-between" style={{ fontSize: '0.8em', color: 'var(--text-muted)' }}>
+                                    <span>{formatTime(currentTime)}</span>
+                                    <span>{formatTime(duration)}</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max={duration || 0}
+                                    value={currentTime}
+                                    onChange={(e) => {
+                                        const time = Number(e.target.value);
+                                        if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
+                                    }}
+                                    className="no-drag"
+                                />
+
+                                <div className="flex-center gap-md mt-4">
+                                    <button onClick={onPrev} disabled={!currentFile} className="btn-secondary">⏮</button>
+                                    <button onClick={togglePlay} disabled={!currentFile} className="btn-primary">
+                                        {isPlaying ? '⏸' : '▶'}
+                                    </button>
+                                    <button onClick={onNext} disabled={!currentFile} className="btn-secondary">⏭</button>
+                                </div>
+                                <div style={{ textAlign: 'center', marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                                    <button onClick={onUploadClick} className="btn-secondary" style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }}>
+                                        📁 {translations.upload || "Add More"}
+                                    </button>
+                                    <button onClick={handleStop} disabled={!currentFile} className="btn-secondary" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}>
+                                        ⏹ {translations.reset || "Reset"}
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </DraggableCard>
 

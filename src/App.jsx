@@ -16,30 +16,23 @@ function App() {
     const [currentFileIndex, setCurrentFileIndex] = useState(-1);
     const [language, setLanguage] = useState('en');
     const [isHighContrast, setIsHighContrast] = useState(false);
+    const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
     const [mode, setMode] = useState('player');
-    const [zoomLevel, setZoomLevel] = useState(100); // Percentage
+    const [zoomLevel, setZoomLevel] = useState(100);
 
     const t = translations[language];
 
+    // Theme Effect
     useEffect(() => {
+        document.body.className = ''; // Clear
         if (isHighContrast) {
             document.body.classList.add('accessibility-mode');
-        } else {
-            document.body.classList.remove('accessibility-mode');
+        } else if (theme === 'light') {
+            document.body.classList.add('light-theme');
         }
-    }, [isHighContrast]);
+    }, [isHighContrast, theme]);
 
-    // Zoom Logic
-    useEffect(() => {
-        const baseSize = 16; // 100% = 16px
-        const newSize = (baseSize * zoomLevel) / 100;
-        document.documentElement.style.fontSize = `${newSize}px`;
-    }, [zoomLevel]);
-
-    const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 20, 200));
-    const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 20, 60));
-
-    // File Handling logic SAME as before
+    // File Handling
     const handleFileSelect = (e) => {
         const selectedFiles = Array.from(e.target.files);
         setFiles((prev) => [...prev, ...selectedFiles]);
@@ -51,7 +44,6 @@ function App() {
         e.target.classList.remove('dragging');
         const allFiles = Array.from(e.dataTransfer.files);
         const audioFiles = allFiles.filter(f => f.type.startsWith('audio/'));
-        if (allFiles.length !== audioFiles.length) alert("Some files were rejected because they are not audio files.");
         if (audioFiles.length > 0) {
             setFiles(prev => {
                 const newFiles = [...prev, ...audioFiles];
@@ -82,18 +74,39 @@ function App() {
     return (
         <>
             <header className="app-header">
-                <h1>{t.title}</h1>
-                <nav className="tab-bar">
-                    <button className={`tab-btn ${mode === 'player' ? 'active' : ''}`} onClick={() => setMode('player')}>{t.player}</button>
-                    <button className={`tab-btn ${mode === 'synth' ? 'active' : ''}`} onClick={() => setMode('synth')}>{t.synthesizer}</button>
-                    <button className={`tab-btn ${mode === 'stave' ? 'active' : ''}`} onClick={() => setMode('stave')}>{t.staveInput}</button>
-                </nav>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.2rem' }}>{t.title}</h1>
+                    <nav className="tab-bar">
+                        <button className={`tab-btn ${mode === 'player' ? 'active' : ''}`} onClick={() => setMode('player')}>{t.player}</button>
+                        <button className={`tab-btn ${mode === 'synth' ? 'active' : ''}`} onClick={() => setMode('synth')}>{t.synthesizer}</button>
+                        <button className={`tab-btn ${mode === 'stave' ? 'active' : ''}`} onClick={() => setMode('stave')}>{t.staveInput}</button>
+                    </nav>
+                </div>
+
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <div className="zoom-controls" style={{ display: 'flex', gap: '5px' }}>
-                        <button onClick={handleZoomOut} className="btn-secondary" style={{ padding: '2px 8px' }}>-</button>
-                        <span style={{ fontSize: '0.8rem', minWidth: '40px', textAlign: 'center' }}>{zoomLevel}%</span>
-                        <button onClick={handleZoomIn} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
+                    {/* Zoom Controls */}
+                    <div className="zoom-controls" style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--bg-element)', padding: '4px 8px', borderRadius: '20px' }}>
+                        <button onClick={() => setZoomLevel(prev => Math.max(prev - 10, 50))} className="btn-secondary" style={{ border: 'none', padding: '0 5px' }}>-</button>
+                        <input
+                            type="range"
+                            min="50"
+                            max="150"
+                            value={zoomLevel}
+                            onChange={(e) => setZoomLevel(Number(e.target.value))}
+                            style={{ width: '60px', margin: 0 }}
+                        />
+                        <button onClick={() => setZoomLevel(prev => Math.min(prev + 10, 150))} className="btn-secondary" style={{ border: 'none', padding: '0 5px' }}>+</button>
+                        <span style={{ fontSize: '0.8rem', minWidth: '35px', textAlign: 'center' }}>{zoomLevel}%</span>
                     </div>
+
+                    <button
+                        className="btn-secondary"
+                        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                    >
+                        {theme === 'dark' ? '☀' : '☾'}
+                    </button>
 
                     <LanguageSelector currentLang={language} onLanguageChange={setLanguage} />
                     <button
@@ -115,27 +128,34 @@ function App() {
             </header>
 
             <main className="app-content">
-                <AudioPlayer
-                    mode={mode}
-                    setMode={setMode}
-                    currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
-                    onEnded={nextTrack}
-                    onNext={nextTrack}
-                    onPrev={prevTrack}
-                    translations={t}
-                    files={files}
-                    currentFileIndex={currentFileIndex}
-                    playFile={playFile}
-                    handleDelete={handleDelete}
-                    handleClearAll={handleClearAll}
-                    dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
-                    onUploadClick={triggerFileUpload} // Pass trigger
-                />
+                {/* Apply Zoom Here via Transform or Font Size */}
+                <div style={{
+                    width: '100%',
+                    height: '100%',
+                    fontSize: `${zoomLevel}%`
+                }}>
+                    <AudioPlayer
+                        mode={mode}
+                        setMode={setMode}
+                        currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
+                        onEnded={nextTrack}
+                        onNext={nextTrack}
+                        onPrev={prevTrack}
+                        translations={t}
+                        files={files}
+                        currentFileIndex={currentFileIndex}
+                        playFile={playFile}
+                        handleDelete={handleDelete}
+                        handleClearAll={handleClearAll}
+                        dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
+                        onUploadClick={triggerFileUpload}
+                    />
+                </div>
             </main>
 
             <footer className="app-footer">
                 <div>© 2025 Audio Studio</div>
-                <div>v1.0.0</div>
+                <div>v1.0.1</div>
             </footer>
         </>
     );

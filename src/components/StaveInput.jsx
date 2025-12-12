@@ -11,20 +11,20 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
     const [octave, setOctave] = useState('4');
     const [duration, setDuration] = useState('0.5');
 
-    // Piano State helpers
+    // Piano State helpers - FULL OCTAVE
     const pianoKeys = [
-        { note: 'C', type: 'white' },
-        { note: 'C#', type: 'black' },
-        { note: 'D', type: 'white' },
-        { note: 'D#', type: 'black' },
-        { note: 'E', type: 'white' },
-        { note: 'F', type: 'white' },
-        { note: 'F#', type: 'black' },
-        { note: 'G', type: 'white' },
-        { note: 'G#', type: 'black' },
-        { note: 'A', type: 'white' },
-        { note: 'A#', type: 'black' },
-        { note: 'B', type: 'white' },
+        { note: 'C', type: 'white', pos: 0 },
+        { note: 'C#', type: 'black', pos: 1 },
+        { note: 'D', type: 'white', pos: 2 },
+        { note: 'D#', type: 'black', pos: 3 },
+        { note: 'E', type: 'white', pos: 4 },
+        { note: 'F', type: 'white', pos: 5 },
+        { note: 'F#', type: 'black', pos: 6 },
+        { note: 'G', type: 'white', pos: 7 },
+        { note: 'G#', type: 'black', pos: 8 },
+        { note: 'A', type: 'white', pos: 9 },
+        { note: 'A#', type: 'black', pos: 10 },
+        { note: 'B', type: 'white', pos: 11 },
     ];
 
     const handleTextChange = (e) => {
@@ -88,6 +88,9 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
             id: Date.now() + Math.random()
         };
         setMelody([...melody, newNote]);
+
+        // Optional: Play note immediately on click for feedback? 
+        // For now, adhering to instruction to just fix UI.
     };
 
     const handleDeleteNote = (id) => {
@@ -113,18 +116,31 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
             </div>
 
             {/* INPUT AREAS */}
-            <div className="input-area" style={{ minHeight: '150px' }}>
+            <div className="input-area" style={{ minHeight: '180px' }}>
                 {inputMode === 'piano' && (
-                    <div className="piano-wrapper" style={{ textAlign: 'center' }}>
-                        <p style={{ marginBottom: '0.5rem', opacity: 0.7 }}>Click keys to add notes (Octave 4, 0.5s)</p>
+                    <div className="piano-wrapper">
+                        {/* We need separate containers or careful positioning for black keys */}
+                        {/* Implementing via single list with CSS handling based on class */}
                         <div className="piano-keys">
                             {pianoKeys.map(k => (
                                 <div
                                     key={k.note}
-                                    className={`key ${k.type}`}
+                                    className={`key ${k.type} no-drag`} // ADDED no-drag
                                     onClick={() => handlePianoClick(k.note)}
+                                    title={k.note}
                                 >
-                                    {k.note}
+                                    {/* Label mainly for black keys or C */}
+                                    <span style={{
+                                        position: 'absolute',
+                                        bottom: '5px',
+                                        width: '100%',
+                                        textAlign: 'center',
+                                        fontSize: '0.6rem',
+                                        color: k.type === 'black' ? '#fff' : '#000',
+                                        pointerEvents: 'none'
+                                    }}>
+                                        {k.note}
+                                    </span>
                                 </div>
                             ))}
                         </div>
@@ -138,6 +154,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                             value={textInput}
                             onChange={handleTextChange}
                             placeholder="C4 0.5&#10;E4 0.5"
+                            className="no-drag"
                         />
                         {error && <div style={{ color: 'var(--danger)', margin: '0.5rem 0' }}>{error}</div>}
                         <button onClick={handleTextSubmit} className="btn-secondary mt-4" style={{ width: '100%' }}>{translations.addNote || "Add Notes"}</button>
@@ -146,17 +163,17 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
 
                 {inputMode === 'builder' && (
                     <div className="builder-mode flex-center gap-md" style={{ flexWrap: 'wrap' }}>
-                        <select value={note} onChange={e => setNote(e.target.value)} style={{ width: '60px' }}>
+                        <select value={note} onChange={e => setNote(e.target.value)} style={{ width: '60px' }} className="no-drag">
                             {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(n => <option key={n} value={n}>{n}</option>)}
                         </select>
-                        <select value={accidental} onChange={e => setAccidental(e.target.value)} style={{ width: '60px' }}>
+                        <select value={accidental} onChange={e => setAccidental(e.target.value)} style={{ width: '60px' }} className="no-drag">
                             <option value="">nat</option>
                             <option value="#">#</option>
                         </select>
-                        <select value={octave} onChange={e => setOctave(e.target.value)} style={{ width: '60px' }}>
+                        <select value={octave} onChange={e => setOctave(e.target.value)} style={{ width: '60px' }} className="no-drag">
                             {[1, 2, 3, 4, 5, 6, 7, 8].map(o => <option key={o} value={o}>{o}</option>)}
                         </select>
-                        <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '80px' }}>
+                        <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '80px' }} className="no-drag">
                             <option value="0.25">0.25s</option>
                             <option value="0.5">0.5s</option>
                             <option value="0.75">0.75s</option>
@@ -176,13 +193,13 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                         {!isPlaying ? (
                             <button onClick={onPlay} disabled={melody.length === 0} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem' }}>▶</button>
                         ) : (
-                            <button onClick={onPlay} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem', background: 'var(--danger)' }}>⏹</button>
+                            <button onClick={onPlay} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem', background: 'var(--danger)', borderColor: 'var(--danger)' }}>⏹</button>
                         )}
                     </div>
                 </div>
 
                 {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>Empty</p> : (
-                    <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+                    <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
                         <table style={{ width: '100%' }}>
                             <thead>
                                 <tr>
@@ -201,7 +218,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                                         <td style={{ textAlign: 'center' }}>
                                             <button
                                                 onClick={() => handleDeleteNote(m.id)}
-                                                style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--danger)' }}
+                                                style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--danger)', border: 'none', cursor: 'pointer' }}
                                             >
                                                 ✕
                                             </button>
@@ -213,7 +230,7 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                     </div>
                 )}
                 <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-                    <button onClick={() => setMelody([])} style={{ fontSize: '0.8rem', background: 'transparent', color: 'inherit', opacity: 0.6 }}>{translations.clearAll || "Clear"}</button>
+                    <button onClick={() => setMelody([])} style={{ fontSize: '0.8rem', background: 'transparent', color: 'inherit', opacity: 0.6, border: 'none', cursor: 'pointer' }}>{translations.clearAll || "Clear"}</button>
                 </div>
             </div>
         </div>
