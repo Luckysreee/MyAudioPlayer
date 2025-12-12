@@ -41,8 +41,8 @@ export const MelodyTable = ({ melody, onDelete, translations }) => (
                     <thead style={{ background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 1 }}>
                         <tr>
                             <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
-                            <th style={{ padding: '8px', textAlign: 'left' }}>Oct</th>
-                            <th style={{ padding: '8px', textAlign: 'left' }}>Dur</th>
+                            <th style={{ padding: '8px', textAlign: 'left' }}>Octave</th>
+                            <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -239,17 +239,17 @@ const StaveInput = ({ melody, setMelody, translations }) => {
 
                 {inputMode === 'builder' && (
                     <div className="builder-mode flex-center gap-md" style={{ flexWrap: 'wrap' }}>
-                        <select value={note} onChange={e => setNote(e.target.value)} style={{ width: '60px' }} className="no-drag">
+                        <select value={note} onChange={e => setNote(e.target.value)} style={{ width: '80px' }} className="no-drag">
                             {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(n => <option key={n} value={n}>{n}</option>)}
                         </select>
-                        <select value={accidental} onChange={e => setAccidental(e.target.value)} style={{ width: '60px' }} className="no-drag">
+                        <select value={accidental} onChange={e => setAccidental(e.target.value)} style={{ width: '80px' }} className="no-drag">
                             <option value="">nat</option>
                             <option value="#">#</option>
                         </select>
-                        <select value={octave} onChange={e => setOctave(e.target.value)} style={{ width: '60px' }} className="no-drag">
+                        <select value={octave} onChange={e => setOctave(e.target.value)} style={{ width: '80px' }} className="no-drag">
                             {[1, 2, 3, 4, 5, 6, 7, 8].map(o => <option key={o} value={o}>{o}</option>)}
                         </select>
-                        <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '80px' }} className="no-drag">
+                        <select value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '100px' }} className="no-drag">
                             <option value="0.25">0.25s</option>
                             <option value="0.5">0.5s</option>
                             <option value="0.75">0.75s</option>

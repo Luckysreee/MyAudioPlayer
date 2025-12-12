@@ -370,13 +370,16 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 2: Controls (Bottom Left, beneath Stave Input) */}
+            {/* Card 2: Visualizer & Controls (Bottom Left, beneath Stave Input) */}
             <DraggableCard
                 title={translations.controls || "Controls"}
                 initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '480px', height: 'calc(100% - 522px)' }}
+                initialSize={{ width: '240px', height: 'calc(100% - 522px)' }}
                 className="stave-controls-card"
             >
+                <div className="visualizer-container" style={{ width: '100%', height: '120px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
+                </div>
                 <StaveControls
                     onPlay={playMelody}
                     isPlaying={isStavePlaying}
@@ -386,10 +389,59 @@ const AudioPlayer = ({
                 />
             </DraggableCard>
 
-            {/* Card 3: Visualizer (Center, between left and right) */}
+            {/* Card 3: Animation (Center-Left) */}
+            <DraggableCard
+                title="Audio Wave"
+                initialPos={{ x: '272px', y: '512px' }}
+                initialSize={{ width: '240px', height: 'calc(100% - 522px)' }}
+                className="stave-animation-card"
+            >
+                <div style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%)',
+                    borderRadius: '8px',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                        padding: '20px'
+                    }}>
+                        {[...Array(8)].map((_, i) => (
+                            <div
+                                key={i}
+                                style={{
+                                    width: '8px',
+                                    height: isStavePlaying ? `${30 + Math.random() * 70}%` : '20%',
+                                    background: 'linear-gradient(to top, var(--primary-color), var(--secondary-color))',
+                                    borderRadius: '4px',
+                                    transition: 'height 0.3s ease',
+                                    animation: isStavePlaying ? `wave ${0.5 + i * 0.1}s ease-in-out infinite alternate` : 'none'
+                                }}
+                            />
+                        ))}
+                    </div>
+                    <style>{`
+                        @keyframes wave {
+                            0% { height: 20%; }
+                            100% { height: 80%; }
+                        }
+                    `}</style>
+                </div>
+            </DraggableCard>
+
+            {/* Card 4: Visualizer (Center, between left and right) */}
             <DraggableCard
                 title={translations.visualizer || "Visualizer"}
-                initialPos={{ x: '512px', y: '16px' }}
+                initialPos={{ x: '528px', y: '16px' }}
                 initialSize={{ width: '300px', height: 'calc(100% - 26px)' }}
                 className="stave-visualizer-card"
             >
@@ -398,7 +450,7 @@ const AudioPlayer = ({
                 </div>
             </DraggableCard>
 
-            {/* Card 4: Melody Table (Right) */}
+            {/* Card 5: Melody Table (Right) */}
             <DraggableCard
                 title={translations.melody || "Melody"}
                 initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
