@@ -320,8 +320,8 @@ const AudioPlayer = ({
             {/* Visualizer Card (Left Side) */}
             <DraggableCard
                 title={translations.visualizer || "Visualizer"}
-                initialPos={{ x: '5%', y: '15%' }}
-                initialSize={{ width: '44%', height: '400px' }}
+                initialPos={{ x: '20px', y: '20px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
                 className="synth-visualizer-card"
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -332,8 +332,8 @@ const AudioPlayer = ({
             {/* Controls Card (Right Side) */}
             <DraggableCard
                 title={translations.synthesizer}
-                initialPos={{ x: '51%', y: '15%' }}
-                initialSize={{ width: '44%', height: 'auto' }}
+                initialPos={{ x: '50%', y: '20px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: 'auto' }}
                 className="synth-controls-card"
             >
                 <SynthControls
