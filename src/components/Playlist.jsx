@@ -14,7 +14,7 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
     };
 
     return (
-        <div className="playlist">
+        <div className="playlist" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3>{translations.playlist}</h3>
                 {files.length > 0 && (
@@ -28,38 +28,40 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
                 <div className="playlist-empty">{translations.noFileSelected || 'No files'}</div>
             )}
 
-            {files.map((file, index) => (
-                <div
-                    key={`${file.name}-${index}`}
-                    className={`playlist-item ${index === currentFileIndex ? 'active' : ''}`}
-                    draggable
-                    onDragStart={(e) => {
-                        dragItem.current = index;
-                        e.target.classList.add('dragging');
-                    }}
-                    onDragEnter={(e) => (dragOverItem.current = index)}
-                    onDragEnd={(e) => {
-                        e.target.classList.remove('dragging');
-                        handleSort();
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                >
-                    <div onClick={() => onPlay(index)} style={{ flex: 1 }}>
-                        <span>{index + 1}. {file.name}</span>
-                    </div>
-
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(index);
+            <div className="playlist-content custom-scroll" style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                {files.map((file, index) => (
+                    <div
+                        key={`${file.name}-${index}`}
+                        className={`playlist-item ${index === currentFileIndex ? 'active' : ''}`}
+                        draggable
+                        onDragStart={(e) => {
+                            dragItem.current = index;
+                            e.target.classList.add('dragging');
                         }}
-                        style={{ marginLeft: '1rem', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid #666' }}
-                        aria-label="Delete"
+                        onDragEnter={(e) => (dragOverItem.current = index)}
+                        onDragEnd={(e) => {
+                            e.target.classList.remove('dragging');
+                            handleSort();
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
                     >
-                        ❌
-                    </button>
-                </div>
-            ))}
+                        <div onClick={() => onPlay(index)} style={{ flex: 1 }}>
+                            <span>{index + 1}. {file.name}</span>
+                        </div>
+
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(index);
+                            }}
+                            style={{ marginLeft: '1rem', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid #666' }}
+                            aria-label="Delete"
+                        >
+                            ❌
+                        </button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

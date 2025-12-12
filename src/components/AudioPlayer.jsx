@@ -190,48 +190,31 @@ const AudioPlayer = ({
 
     // RENDER w/ DRAGGABLE CARDS
 
-    // PLAYER MODE (3 Cards: Upload, Playlist, Controls)
+    // PLAYER MODE (2 Columns: Left 70%, Right 30%)
     const renderPlayerMode = () => (
         <>
-            {/* 1. Upload Card (Top-Left: 25% W, 40% H) */}
+            {/* === LEFT COLUMN (70%) === */}
+
+            {/* 1. Upload Card (Top-Left) */}
             <DraggableCard
                 title={translations.upload}
-                initialPos={{ x: '0%', y: '0%' }}
-                initialSize={{ width: '25%', height: '40%' }}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: 'calc(70% - 24px)', height: 'calc(50% - 24px)' }}
                 className="upload-card"
             >
                 <div {...dragHandlers} style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={onUploadClick}>
                     <div className="upload-icon-large" style={{ marginBottom: '1rem' }}>
-                        {/* SVG Upload Icon */}
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                     </div>
                     <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{translations.selectFiles || "Select Files"}</span>
                 </div>
             </DraggableCard>
 
-            {/* 2. Playlist Card (Bottom-Left: 25% W, 60% H) */}
-            <DraggableCard
-                title={translations.playlist}
-                initialPos={{ x: '0%', y: '40%' }}
-                initialSize={{ width: '25%', height: '60%' }}
-                className="playlist-card"
-            >
-                <Playlist
-                    files={files}
-                    currentFileIndex={currentFileIndex}
-                    onPlay={playFile}
-                    onReorder={() => { }}
-                    onDelete={handleDelete}
-                    onClearAll={handleClearAll}
-                    translations={translations}
-                />
-            </DraggableCard>
-
-            {/* 3. Controls Card (Right: 75% W, 100% H) */}
+            {/* 2. Controls Card (Bottom-Left) */}
             <DraggableCard
                 title={currentFile ? currentFile.name : translations.player}
-                initialPos={{ x: '25%', y: '0%' }}
-                initialSize={{ width: '75%', height: '100%' }}
+                initialPos={{ x: '16px', y: 'calc(50% + 8px)' }}
+                initialSize={{ width: 'calc(70% - 24px)', height: 'calc(50% - 24px)' }}
                 className="controls-card"
             >
                 <div className="visualizer-container" style={{ flex: 1, minHeight: '50%', background: '#000', borderRadius: '8px', overflow: 'hidden', position: 'relative' }}>
@@ -239,7 +222,7 @@ const AudioPlayer = ({
                     {!currentFile && <div className="absolute-center" style={{ opacity: 0.3 }}>NO SIGNAL</div>}
                 </div>
 
-                <div className="controls-area" style={{ paddingTop: '2rem' }}>
+                <div className="controls-area" style={{ paddingTop: '1rem' }}>
                     <div className="flex-between mb-2" style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                         <span>{formatTime(currentTime)}</span>
                         <span>{formatTime(duration)}</span>
@@ -254,7 +237,7 @@ const AudioPlayer = ({
                             if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
                         }}
                         className="no-drag custom-slider"
-                        style={{ width: '100%', marginBottom: '2rem' }}
+                        style={{ width: '100%', marginBottom: '1rem' }}
                     />
 
                     <div className="flex-center gap-xl">
@@ -281,16 +264,36 @@ const AudioPlayer = ({
                     crossOrigin="anonymous"
                 />
             </DraggableCard>
+
+            {/* === RIGHT COLUMN (30%) === */}
+
+            {/* 3. Playlist Card (Sidebar) */}
+            <DraggableCard
+                title={translations.playlist}
+                initialPos={{ x: 'calc(70% + 8px)', y: '16px' }}
+                initialSize={{ width: 'calc(30% - 24px)', height: 'calc(100% - 32px)' }}
+                className="playlist-card"
+            >
+                <Playlist
+                    files={files}
+                    currentFileIndex={currentFileIndex}
+                    onPlay={playFile}
+                    onReorder={() => { }}
+                    onDelete={handleDelete}
+                    onClearAll={handleClearAll}
+                    translations={translations}
+                />
+            </DraggableCard>
         </>
     );
 
-    // SYNTH MODE (2 Cards Snug: Controls Left 30%, Visualizer Right 70%)
+    // SYNTH MODE (With Gaps)
     const renderSynthMode = () => (
         <>
             <DraggableCard
                 title={translations.synthesizer}
-                initialPos={{ x: '0%', y: '0%' }}
-                initialSize={{ width: '30%', height: '100%' }} // Full height sidebar
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: 'calc(30% - 24px)', height: 'calc(100% - 32px)' }}
             >
                 <div className="no-drag">
                     <SynthControls
@@ -309,8 +312,8 @@ const AudioPlayer = ({
             </DraggableCard>
             <DraggableCard
                 title="Visualizer"
-                initialPos={{ x: '30%', y: '0%' }}
-                initialSize={{ width: '70%', height: '100%' }} // Fill Rest
+                initialPos={{ x: 'calc(30% + 8px)', y: '16px' }}
+                initialSize={{ width: 'calc(70% - 24px)', height: 'calc(100% - 32px)' }}
             >
                 <div className="flex-center" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '4px', overflow: 'hidden' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
@@ -319,14 +322,14 @@ const AudioPlayer = ({
         </>
     );
 
-    // STAVE MODE (3 Cards Snug)
+    // STAVE MODE (With Gaps)
     const renderStaveMode = () => (
         <>
-            {/* 1. Controls (Top-Left: 30% W, 30% H) */}
+            {/* 1. Controls */}
             <DraggableCard
                 title={translations.mode}
-                initialPos={{ x: '0%', y: '0%' }}
-                initialSize={{ width: '30%', height: '30%' }}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: 'calc(30% - 24px)', height: 'calc(30% - 24px)' }}
             >
                 <div className="flex-center column gap-md h-100 no-drag">
                     <button onClick={playStave} className="btn-primary" style={{ width: '100%' }}>
@@ -338,11 +341,11 @@ const AudioPlayer = ({
                 </div>
             </DraggableCard>
 
-            {/* 2. Melody Table (Top-Right: 70% W, 30% H) */}
+            {/* 2. Melody Table */}
             <DraggableCard
                 title={translations.melody}
-                initialPos={{ x: '30%', y: '0%' }}
-                initialSize={{ width: '70%', height: '30%' }}
+                initialPos={{ x: 'calc(30% + 8px)', y: '16px' }}
+                initialSize={{ width: 'calc(70% - 24px)', height: 'calc(30% - 24px)' }}
             >
                 <div className="melody-scroll no-drag" style={{ height: '100%', overflowY: 'auto' }}>
                     {(!melody || melody.length === 0) ? <div className="text-muted flex-center h-100">No notes added</div> : (
@@ -357,11 +360,11 @@ const AudioPlayer = ({
                 </div>
             </DraggableCard>
 
-            {/* 3. Input (Bottom: 100% W, 70% H) */}
+            {/* 3. Input */}
             <DraggableCard
                 title={translations.staveInput}
-                initialPos={{ x: '0%', y: '30%' }}
-                initialSize={{ width: '100%', height: '70%' }}
+                initialPos={{ x: '16px', y: 'calc(30% + 8px)' }}
+                initialSize={{ width: 'calc(100% - 32px)', height: 'calc(70% - 24px)' }}
             >
                 <div className="no-drag" style={{ height: '100%' }}>
                     <StaveInput
@@ -370,9 +373,7 @@ const AudioPlayer = ({
                         onPlay={playStave}
                         isPlaying={isStavePlaying}
                         translations={translations}
-                        embedded={true} // Prop to hide internal playback controls if we moved them out? 
-                    // Actually I kept controls nicely in the StaveInput in previous step.
-                    // But here I made a separate Controls card. I should hide them in StaveInput or just ignore duplication.
+                        embedded={true}
                     />
                 </div>
             </DraggableCard>

@@ -56,10 +56,11 @@ const DraggableCard = ({ children, title, initialPos, initialSize, className = '
     };
 
     // Styles
+    const formatVal = (v) => typeof v === 'number' ? `${v}px` : v;
     const style = {
         position: 'absolute',
-        left: pos.x + 'px',
-        top: pos.y + 'px',
+        left: formatVal(pos.x),
+        top: formatVal(pos.y),
         width: initialSize ? initialSize.width : 'auto',
         height: initialSize ? initialSize.height : 'auto',
         zIndex: isDragging ? 1000 : 10,
