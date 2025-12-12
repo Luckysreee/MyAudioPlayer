@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Piano from './Piano';
 
 // 1. STAVE CONTROLS (Play/Stop/Clear + Visualizer placeholder if we moved it here, but Visualizer is in parent)
 export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations }) => (
@@ -187,30 +188,7 @@ const StaveInput = ({ melody, setMelody, translations }) => {
             {/* INPUT AREAS */}
             <div className="input-area" style={{ minHeight: '180px' }}>
                 {inputMode === 'piano' && (
-                    <div className="piano-wrapper">
-                        <div className="piano-keys">
-                            {fullPianoKeys.map(k => (
-                                <div
-                                    key={k.note}
-                                    className={`key ${k.type} no-drag`}
-                                    onClick={() => handlePianoClick(k.note)}
-                                    title={k.note}
-                                >
-                                    <span style={{
-                                        position: 'absolute',
-                                        bottom: '5px',
-                                        width: '100%',
-                                        textAlign: 'center',
-                                        fontSize: '0.6rem',
-                                        color: k.type === 'black' ? '#fff' : '#000',
-                                        pointerEvents: 'none'
-                                    }}>
-                                        {k.note}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <Piano onKeyClick={handlePianoClick} octave={4} />
                 )}
 
                 {inputMode === 'text' && (
