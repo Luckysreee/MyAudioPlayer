@@ -50,10 +50,10 @@ const SynthControls = ({
 
             {/* Slider: Frequency (Only for oscillators) */}
             {!waveform.includes('noise') && (
-                <div className="control-group">
-                    <div className="flex-between" style={{ fontSize: '0.8rem', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div className="flex-between" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                         <label>{translations.frequency || "Frequency"}</label>
-                        <span style={{ color: 'var(--primary)' }}>{frequency} Hz</span>
+                        <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{frequency} Hz</span>
                     </div>
                     <input
                         type="range"
@@ -62,15 +62,16 @@ const SynthControls = ({
                         value={frequency}
                         onChange={(e) => setFrequency(Number(e.target.value))}
                         className="no-drag"
+                        style={{ width: '100%' }}
                     />
                 </div>
             )}
 
             {/* Slider: Volume */}
-            <div className="control-group">
-                <div className="flex-between" style={{ fontSize: '0.8rem', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div className="flex-between" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                     <label>{translations.volume || "Volume"}</label>
-                    <span style={{ color: 'var(--primary)' }}>{Math.round(volume * 100)}%</span>
+                    <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{Math.round(volume * 100)}%</span>
                 </div>
                 <input
                     type="range"
@@ -80,6 +81,7 @@ const SynthControls = ({
                     value={volume}
                     onChange={onVolumeChange}
                     className="no-drag"
+                    style={{ width: '100%' }}
                 />
             </div>
 
