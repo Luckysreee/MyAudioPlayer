@@ -55,7 +55,7 @@ function App() {
     const prevTrack = () => { if (currentFileIndex > 0) setCurrentFileIndex(currentFileIndex - 1); };
 
     const handleDelete = (index) => {
-        setFiles(prev => { const new = [...prev]; new.splice(index, 1); return new; });
+        setFiles(prev => { const newFiles = [...prev]; newFiles.splice(index, 1); return newFiles; });
         if (index === currentFileIndex) setCurrentFileIndex(-1);
         else if (index < currentFileIndex) setCurrentFileIndex(currentFileIndex - 1);
     };
