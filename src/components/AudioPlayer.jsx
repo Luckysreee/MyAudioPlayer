@@ -44,7 +44,13 @@ const AudioPlayer = ({
 
     // Global Volume
     const [volume, setVolume] = useState(0.5);
+    const volumeRef = useRef(0.5);
     const [analyserNode, setAnalyserNode] = useState(null);
+
+    // Update volume ref when volume state changes
+    useEffect(() => {
+        volumeRef.current = volume;
+    }, [volume]);
 
     // Initializer
     useEffect(() => {
@@ -157,7 +163,7 @@ const AudioPlayer = ({
             noteGain.connect(gainNodeRef.current);
 
             // Apply volume to this note's gain
-            noteGain.gain.value = volume;
+            noteGain.gain.value = volumeRef.current;
 
             osc.start();
             oscillatorRef.current = osc;
