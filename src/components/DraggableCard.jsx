@@ -7,8 +7,9 @@ const DraggableCard = ({ children, initialPos = { x: 0, y: 0 }, title, className
     const cardStartPos = useRef(null); // { x, y } of card at start
 
     const handlePointerDown = (e) => {
-        // Prevent dragging if interacting with inputs or sliders
+        // Prevent dragging if interacting with inputs, sliders, or explicit 'no-drag' elements
         if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'LABEL'].includes(e.target.tagName)) return;
+        if (e.target.closest('.no-drag')) return;
 
         e.currentTarget.setPointerCapture(e.pointerId);
         dragStartPos.current = { x: e.clientX, y: e.clientY };

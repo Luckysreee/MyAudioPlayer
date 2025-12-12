@@ -224,6 +224,7 @@ const AudioPlayer = ({
                                 const time = Number(e.target.value);
                                 if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
                             }}
+                            className="no-drag"
                         />
 
                         <div className="flex-center gap-md mt-4">
@@ -233,7 +234,10 @@ const AudioPlayer = ({
                             </button>
                             <button onClick={onNext} disabled={!currentFile} className="btn-secondary">⏭</button>
                         </div>
-                        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                        <div style={{ textAlign: 'center', marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                            <button onClick={onUploadClick} className="btn-secondary" style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }}>
+                                📁 {translations.upload || "Upload"}
+                            </button>
                             <button onClick={handleStop} disabled={!currentFile} className="btn-secondary" style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}>
                                 ⏹ {translations.reset || "Param"}
                             </button>
@@ -260,18 +264,20 @@ const AudioPlayer = ({
     const renderSynthMode = () => (
         <>
             <DraggableCard title={translations.synthesizer} initialPos={{ x: 50, y: 50 }} className="left-panel">
-                <SynthControls
-                    frequency={frequency}
-                    setFrequency={setFrequency}
-                    waveform={waveform}
-                    setWaveform={setWaveform}
-                    volume={volume}
-                    onVolumeChange={handleVolumeChange} // WIRED
-                    isPlaying={isSynthPlaying}
-                    onStart={startSynth}
-                    onStop={stopSynth}
-                    translations={translations}
-                />
+                <div className="no-drag">
+                    <SynthControls
+                        frequency={frequency}
+                        setFrequency={setFrequency}
+                        waveform={waveform}
+                        setWaveform={setWaveform}
+                        volume={volume}
+                        onVolumeChange={handleVolumeChange}
+                        isPlaying={isSynthPlaying}
+                        onStart={startSynth}
+                        onStop={stopSynth}
+                        translations={translations}
+                    />
+                </div>
             </DraggableCard>
             <DraggableCard title="Visualizer" initialPos={{ x: 450, y: 50 }} className="right-panel">
                 <div className="flex-center" style={{ background: '#000', borderRadius: '4px', overflow: 'hidden' }}>
@@ -285,13 +291,15 @@ const AudioPlayer = ({
     const renderStaveMode = () => (
         <>
             <DraggableCard title={translations.staveInput} initialPos={{ x: 100, y: 50 }} className="wide-card">
-                <StaveInput
-                    melody={melody}
-                    setMelody={setMelody}
-                    onPlay={playStave}
-                    isPlaying={isStavePlaying}
-                    translations={translations}
-                />
+                <div className="no-drag">
+                    <StaveInput
+                        melody={melody}
+                        setMelody={setMelody}
+                        onPlay={playStave}
+                        isPlaying={isStavePlaying}
+                        translations={translations}
+                    />
+                </div>
             </DraggableCard>
         </>
     );

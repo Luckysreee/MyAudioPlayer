@@ -17,6 +17,7 @@ function App() {
     const [language, setLanguage] = useState('en');
     const [isHighContrast, setIsHighContrast] = useState(false);
     const [mode, setMode] = useState('player');
+    const [zoomLevel, setZoomLevel] = useState(100); // Percentage
 
     const t = translations[language];
 
@@ -27,6 +28,16 @@ function App() {
             document.body.classList.remove('accessibility-mode');
         }
     }, [isHighContrast]);
+
+    // Zoom Logic
+    useEffect(() => {
+        const baseSize = 16; // 100% = 16px
+        const newSize = (baseSize * zoomLevel) / 100;
+        document.documentElement.style.fontSize = `${newSize}px`;
+    }, [zoomLevel]);
+
+    const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 20, 200));
+    const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 20, 60));
 
     // File Handling logic SAME as before
     const handleFileSelect = (e) => {
@@ -48,6 +59,11 @@ function App() {
                 return newFiles;
             });
         }
+    };
+
+    // Explicit Upload Handler
+    const triggerFileUpload = () => {
+        document.getElementById('file-upload-input').click();
     };
 
     const playFile = (index) => { if (index >= 0 && index < files.length) setCurrentFileIndex(index); };
@@ -73,6 +89,12 @@ function App() {
                     <button className={`tab-btn ${mode === 'stave' ? 'active' : ''}`} onClick={() => setMode('stave')}>{t.staveInput}</button>
                 </nav>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div className="zoom-controls" style={{ display: 'flex', gap: '5px' }}>
+                        <button onClick={handleZoomOut} className="btn-secondary" style={{ padding: '2px 8px' }}>-</button>
+                        <span style={{ fontSize: '0.8rem', minWidth: '40px', textAlign: 'center' }}>{zoomLevel}%</span>
+                        <button onClick={handleZoomIn} className="btn-secondary" style={{ padding: '2px 8px' }}>+</button>
+                    </div>
+
                     <LanguageSelector currentLang={language} onLanguageChange={setLanguage} />
                     <button
                         className={`a11y-toggle ${isHighContrast ? 'active' : ''}`}
@@ -81,6 +103,14 @@ function App() {
                     >
                         <span>👁</span>
                     </button>
+                    <input
+                        type="file"
+                        id="file-upload-input"
+                        multiple
+                        accept="audio/*"
+                        style={{ display: 'none' }}
+                        onChange={handleFileSelect}
+                    />
                 </div>
             </header>
 
@@ -99,6 +129,7 @@ function App() {
                     handleDelete={handleDelete}
                     handleClearAll={handleClearAll}
                     dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
+                    onUploadClick={triggerFileUpload} // Pass trigger
                 />
             </main>
 
