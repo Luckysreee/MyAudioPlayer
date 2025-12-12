@@ -358,10 +358,10 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.controls || "Controls"}
                 initialPos={{ x: '16px', y: '16px' }}
-                initialSize={{ width: '40%', height: '280px' }}
+                initialSize={{ width: '40%', height: '200px' }}
                 className="stave-controls-card"
             >
-                <div className="visualizer-container" style={{ width: '100%', height: '120px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="visualizer-container" style={{ width: '100%', height: '80px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
                 </div>
                 <StaveControls
@@ -376,8 +376,8 @@ const AudioPlayer = ({
             {/* Card 2: Editor (Bottom Center-Left) */}
             <DraggableCard
                 title={translations.staveInput}
-                initialPos={{ x: '16px', y: '310px' }}
-                initialSize={{ width: '40%', height: '350px' }}
+                initialPos={{ x: '16px', y: '232px' }}
+                initialSize={{ width: '40%', height: '300px' }}
                 className="stave-editor-card"
             >
                 <StaveInput
@@ -393,7 +393,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.melody || "Melody"}
                 initialPos={{ x: '45%', y: '16px' }}
-                initialSize={{ width: '50%', height: '644px' }}
+                initialSize={{ width: '50%', height: '516px' }}
                 className="stave-table-card"
             >
                 <MelodyTable
