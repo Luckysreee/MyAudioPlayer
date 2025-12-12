@@ -4,7 +4,7 @@ import DraggableCard from './DraggableCard';
 import Visualizer from './Visualizer';
 import Playlist from './Playlist';
 import SynthControls from './SynthControls';
-import StaveInput from './StaveInput';
+import StaveInput, { StaveControls, MelodyTable } from './StaveInput';
 
 const AudioPlayer = ({
     mode,
@@ -353,22 +353,56 @@ const AudioPlayer = ({
     );
 
     const renderStaveMode = () => (
-        <DraggableCard
-            title={translations.staveInput}
-            initialPos={{ x: '16px', y: '16px' }}
-            initialSize={{ width: 'calc(100% - 32px)', height: '600px' }}
-        >
-            <div className="visualizer-container" style={{ width: '100%', height: '100px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden' }}>
-                <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
-            </div>
-            <StaveInput
-                melody={melody}
-                setMelody={setMelody}
-                onPlay={playMelody}
-                isPlaying={isStavePlaying}
-                translations={translations}
-            />
-        </DraggableCard>
+        <>
+            {/* Card 1: Controls & Visualizer (Top Center-Left) */}
+            <DraggableCard
+                title={translations.controls || "Controls"}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: '40%', height: '280px' }}
+                className="stave-controls-card"
+            >
+                <div className="visualizer-container" style={{ width: '100%', height: '120px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
+                </div>
+                <StaveControls
+                    onPlay={playMelody}
+                    isPlaying={isStavePlaying}
+                    onClear={() => setMelody([])}
+                    melody={melody}
+                    translations={translations}
+                />
+            </DraggableCard>
+
+            {/* Card 2: Editor (Bottom Center-Left) */}
+            <DraggableCard
+                title={translations.staveInput}
+                initialPos={{ x: '16px', y: '310px' }}
+                initialSize={{ width: '40%', height: '350px' }}
+                className="stave-editor-card"
+            >
+                <StaveInput
+                    melody={melody}
+                    setMelody={setMelody}
+                    onPlay={playMelody}
+                    isPlaying={isStavePlaying}
+                    translations={translations}
+                />
+            </DraggableCard>
+
+            {/* Card 3: Melody Table (Right Sidebar) */}
+            <DraggableCard
+                title={translations.melody || "Melody"}
+                initialPos={{ x: '45%', y: '16px' }}
+                initialSize={{ width: '50%', height: '644px' }}
+                className="stave-table-card"
+            >
+                <MelodyTable
+                    melody={melody}
+                    onDelete={(id) => setMelody(melody.filter(n => n.id !== id))}
+                    translations={translations}
+                />
+            </DraggableCard>
+        </>
     );
 
     return (

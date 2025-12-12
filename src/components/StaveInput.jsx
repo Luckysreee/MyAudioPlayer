@@ -1,6 +1,75 @@
 import React, { useState } from 'react';
 
-const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
+// 1. STAVE CONTROLS (Play/Stop/Clear + Visualizer placeholder if we moved it here, but Visualizer is in parent)
+export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations }) => (
+    <div className="flex-center gap-md" style={{ width: '100%', padding: '1rem' }}>
+        <button
+            onClick={onPlay}
+            className="btn-primary"
+            disabled={melody.length === 0}
+            style={{
+                width: '100%',
+                height: '45px',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                background: isPlaying ? 'var(--error-color)' : 'var(--surface-color)',
+                borderColor: isPlaying ? 'var(--error-color)' : 'var(--primary-color)',
+                color: isPlaying ? '#fff' : 'var(--primary-color)',
+                boxShadow: isPlaying ? 'none' : '0 0 10px rgba(0,0,0,0.2)'
+            }}
+        >
+            {isPlaying ? "⏹ Stop" : "▶ Play Melody"}
+        </button>
+        <button
+            onClick={onClear}
+            disabled={melody.length === 0}
+            className="btn-secondary"
+            style={{ height: '45px', whiteSpace: 'nowrap' }}
+        >
+            {translations.clearAll || "Clear"}
+        </button>
+    </div>
+);
+
+// 2. MELODY TABLE
+export const MelodyTable = ({ melody, onDelete, translations }) => (
+    <div className="melody-display" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
+            <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead style={{ background: 'rgba(255,255,255,0.05)', position: 'sticky', top: 0 }}>
+                        <tr>
+                            <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
+                            <th style={{ padding: '8px', textAlign: 'left' }}>Oct</th>
+                            <th style={{ padding: '8px', textAlign: 'left' }}>Dur</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {melody.map((m, idx) => (
+                            <tr key={m.id || idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <td style={{ padding: '8px' }}>{m.note}{m.accidental}</td>
+                                <td style={{ padding: '8px' }}>{m.octave}</td>
+                                <td style={{ padding: '8px' }}>{m.duration}s</td>
+                                <td style={{ textAlign: 'center', padding: '8px' }}>
+                                    <button
+                                        onClick={() => onDelete(m.id)}
+                                        style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--error-color)', border: 'none', cursor: 'pointer' }}
+                                    >
+                                        ✕
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        )}
+    </div>
+);
+
+// 3. MAIN EDITOR (Input Modes)
+const StaveInput = ({ melody, setMelody, translations }) => {
     const [inputMode, setInputMode] = useState('piano'); // 'text', 'builder', 'piano'
     const [textInput, setTextInput] = useState('');
     const [error, setError] = useState('');
@@ -18,13 +87,21 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
         { note: 'D', type: 'white', pos: 2 },
         { note: 'D#', type: 'black', pos: 3 },
         { note: 'E', type: 'white', pos: 4 },
-        { note: 'F', type: 'white', pos: 5 },
-        { note: 'F#', type: 'black', pos: 6 },
-        { note: 'G', type: 'white', pos: 7 },
-        { note: 'G#', type: 'black', pos: 8 },
-        { note: 'A', type: 'white', pos: 9 },
-        { note: 'A#', type: 'black', pos: 10 },
-        { note: 'B', type: 'white', pos: 11 },
+        { note: 'F#', type: 'black', pos: 6 }, // Corrected missing index 5 in previous array but logic seemed ok? 
+        // Wait, array was: C, C#, D, D#, E, F, F#, G, G#, A, A#, B
+        // Indices: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.
+        // F is index 5. F# is 6.
+        // Let's stick to the previous array definition but ensure keys are correct.
+    ];
+
+    const fullPianoKeys = [
+        { note: 'C', type: 'white' }, { note: 'C#', type: 'black' },
+        { note: 'D', type: 'white' }, { note: 'D#', type: 'black' },
+        { note: 'E', type: 'white' },
+        { note: 'F', type: 'white' }, { note: 'F#', type: 'black' },
+        { note: 'G', type: 'white' }, { note: 'G#', type: 'black' },
+        { note: 'A', type: 'white' }, { note: 'A#', type: 'black' },
+        { note: 'B', type: 'white' }
     ];
 
     const handleTextChange = (e) => {
@@ -77,24 +154,16 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
     };
 
     const handlePianoClick = (keyNote) => {
-        // keyNote is "C", "C#" etc.
         const n = keyNote.charAt(0);
         const acc = keyNote.length > 1 ? '#' : '';
         const newNote = {
             note: n,
             accidental: acc,
-            octave: 4, // Default octave for piano click
+            octave: 4,
             duration: 0.5,
             id: Date.now() + Math.random()
         };
         setMelody([...melody, newNote]);
-
-        // Optional: Play note immediately on click for feedback? 
-        // For now, adhering to instruction to just fix UI.
-    };
-
-    const handleDeleteNote = (id) => {
-        setMelody(melody.filter(n => n.id !== id));
     };
 
     return (
@@ -119,17 +188,14 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
             <div className="input-area" style={{ minHeight: '180px' }}>
                 {inputMode === 'piano' && (
                     <div className="piano-wrapper">
-                        {/* We need separate containers or careful positioning for black keys */}
-                        {/* Implementing via single list with CSS handling based on class */}
                         <div className="piano-keys">
-                            {pianoKeys.map(k => (
+                            {fullPianoKeys.map(k => (
                                 <div
                                     key={k.note}
-                                    className={`key ${k.type} no-drag`} // ADDED no-drag
+                                    className={`key ${k.type} no-drag`}
                                     onClick={() => handlePianoClick(k.note)}
                                     title={k.note}
                                 >
-                                    {/* Label mainly for black keys or C */}
                                     <span style={{
                                         position: 'absolute',
                                         bottom: '5px',
@@ -155,8 +221,9 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                             onChange={handleTextChange}
                             placeholder="C4 0.5&#10;E4 0.5"
                             className="no-drag"
+                            style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--primary-color)', background: 'var(--surface-color)', color: 'var(--text-color)' }}
                         />
-                        {error && <div style={{ color: 'var(--danger)', margin: '0.5rem 0' }}>{error}</div>}
+                        {error && <div style={{ color: 'var(--error-color)', margin: '0.5rem 0' }}>{error}</div>}
                         <button onClick={handleTextSubmit} className="btn-secondary mt-4" style={{ width: '100%' }}>{translations.addNote || "Add Notes"}</button>
                     </div>
                 )}
@@ -183,55 +250,6 @@ const StaveInput = ({ melody, setMelody, onPlay, isPlaying, translations }) => {
                         <button onClick={handleAddNote} className="btn-secondary">{translations.addNote}</button>
                     </div>
                 )}
-            </div>
-
-            {/* MELODY TABLE */}
-            <div className="melody-display mt-4">
-                <div className="flex-between mb-4">
-                    <h4>{translations.melody}</h4>
-                    <div>
-                        {!isPlaying ? (
-                            <button onClick={onPlay} disabled={melody.length === 0} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem' }}>▶</button>
-                        ) : (
-                            <button onClick={onPlay} className="btn-primary" style={{ width: '40px', height: '40px', fontSize: '1rem', background: 'var(--danger)', borderColor: 'var(--danger)' }}>⏹</button>
-                        )}
-                    </div>
-                </div>
-
-                {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>Empty</p> : (
-                    <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
-                        <table style={{ width: '100%' }}>
-                            <thead>
-                                <tr>
-                                    <th>Note</th>
-                                    <th>Oct</th>
-                                    <th>Dur</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {melody.map((m, idx) => (
-                                    <tr key={m.id || idx}>
-                                        <td>{m.note}{m.accidental}</td>
-                                        <td>{m.octave}</td>
-                                        <td>{m.duration}s</td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <button
-                                                onClick={() => handleDeleteNote(m.id)}
-                                                style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--danger)', border: 'none', cursor: 'pointer' }}
-                                            >
-                                                ✕
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-                <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-                    <button onClick={() => setMelody([])} style={{ fontSize: '0.8rem', background: 'transparent', color: 'inherit', opacity: 0.6, border: 'none', cursor: 'pointer' }}>{translations.clearAll || "Clear"}</button>
-                </div>
             </div>
         </div>
     );
