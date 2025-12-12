@@ -250,3 +250,103 @@ canvas {
   background: #000;
   margin: 1rem 0;
 }
+
+/* Application Layout Structure */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
+}
+
+.app-header {
+  flex: 0 0 auto;
+  padding: 1rem;
+  background-color: var(--surface-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 50;
+}
+
+.app-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  /* Contains draggable items */
+  width: 100%;
+  height: 100%;
+}
+
+.app-footer {
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  background-color: var(--surface-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+  z-index: 50;
+}
+
+/* Draggable Card Styles */
+.draggable-card {
+  position: absolute;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.draggable-card.dragging {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  cursor: grabbing;
+  z-index: 1000 !important;
+}
+
+.card-header {
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+}
+
+.draggable-card.dragging .card-header {
+  cursor: grabbing;
+}
+
+.card-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar Styling for Cards */
+.card-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: transparent;
+}

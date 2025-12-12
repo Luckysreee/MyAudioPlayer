@@ -86,7 +86,7 @@ function App() {
 
     // Layout: Header -> Content -> Footer
     return (
-        <>
+        <div className="app-container">
             <header className="app-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <h1 style={{ margin: 0, fontSize: '1.2rem' }}>{t.title}</h1>
@@ -189,7 +189,7 @@ function App() {
                 <div>© 2025 Audio Studio</div>
                 <div>v1.0.1</div>
             </footer>
-        </>
+        </div>
     );
 }
 
