@@ -321,6 +321,9 @@ const AudioPlayer = ({
             initialPos={{ x: 'center', y: 'center' }}
             initialSize={{ width: '600px', height: 'auto' }}
         >
+            <div className="visualizer-container" style={{ width: '100%', height: '100px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden' }}>
+                <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
+            </div>
             <SynthControls
                 frequency={frequency}
                 setFrequency={setFrequency}
@@ -342,6 +345,9 @@ const AudioPlayer = ({
             initialPos={{ x: '16px', y: '16px' }}
             initialSize={{ width: 'calc(100% - 32px)', height: '600px' }}
         >
+            <div className="visualizer-container" style={{ width: '100%', height: '100px', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden' }}>
+                <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
+            </div>
             <StaveInput
                 melody={melody}
                 setMelody={setMelody}
