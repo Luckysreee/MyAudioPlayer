@@ -62,7 +62,13 @@ function App() {
     };
 
     const playFile = (index) => { if (index >= 0 && index < files.length) setCurrentFileIndex(index); };
-    const nextTrack = () => { if (currentFileIndex < files.length - 1) setCurrentFileIndex(currentFileIndex + 1); };
+    const nextTrack = () => {
+        if (currentFileIndex < files.length - 1) {
+            setCurrentFileIndex(currentFileIndex + 1);
+        } else {
+            setCurrentFileIndex(-1);
+        }
+    };
     const prevTrack = () => { if (currentFileIndex > 0) setCurrentFileIndex(currentFileIndex - 1); };
 
     const handleDelete = (index) => {
