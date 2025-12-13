@@ -74,81 +74,85 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
 
             // E4 is correct:
             // Line 5 (bottom): E4
-            // Line 4: G4
             // Line 3: B4
             // Line 2: D5
             // Line 1 (top): F5
 
             // Wait, standard Treble Clef:
-            // Line 1 (Bottom): E4
-            // Space 1: F4
-            // Line 2: G4
-            // ...
-
-            // Let's re-align:
-            // Bottom Line y = staffTop + 4 * gap.
-            // This is E4.
-            // Note Y = BottomLineY - (diatonicIndex - E4Index) * (gap / 2)
-
-            const E4Index = 2; // C4=0, D4=1, E4=2.
-            const bottomLineY = staffTop + (4 * staffGap);
-
-            const noteY = bottomLineY - ((diatonicIndex - E4Index) * (staffGap / 2));
-
-            // Draw Ledger Lines if needed
-            // Ledger lines are needed if y >= bottomLineY + gap (below staff) 
-            // or y <= staffTop - gap (above staff)
-            // C4 (index 0) is below E4 (index 2). 2 steps below. 
-            // C4 Y = BottomLineY - (0 - 2) * 10 = Bottom + 20.
-
-            // Draw Note Head
-            ctx.fillStyle = 'var(--primary-color)'; // Use theme color if possible, else a distinct one
-            // We can't access CSS vars easily in canvas without computing styles. 
-            // Let's pick a vibrant color or read computed style.
-            const computedStyle = getComputedStyle(canvas);
-            const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#2196F3';
-
-            ctx.fillStyle = primaryColor;
+            // Draw Staff Lines
+            ctx.strokeStyle = '#aaa';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            // Reduce size slightly (original multiplied by 0.9)
-            ctx.ellipse(startX + staffWidth / 2, noteY, (staffGap * 0.6) * 0.9, (staffGap * 0.4) * 0.9, 0, 0, 2 * Math.PI);
-            ctx.fill();
-
-            // Draw Stem
-            ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            // Stem usually goes up on right for notes below middle line, down on left for notes above.
-            // Middle Line is B4 (diatonic index 6).
-            if (diatonicIndex < 6) {
-                // Up
-                ctx.moveTo(startX + staffWidth / 2 + ((staffGap * 0.6) * 0.9), noteY);
-                ctx.lineTo(startX + staffWidth / 2 + ((staffGap * 0.6) * 0.9), noteY - (staffGap * 3.5));
-            } else {
-                // Down
-                ctx.moveTo(startX + staffWidth / 2 - ((staffGap * 0.6) * 0.9), noteY);
-                ctx.lineTo(startX + staffWidth / 2 - ((staffGap * 0.6) * 0.9), noteY + (staffGap * 3.5));
+            for (let i = 0; i < 5; i++) {
+                const y = staffTop + (i * staffGap);
+                ctx.moveTo(startX, y);
+                ctx.lineTo(startX + staffWidth, y);
             }
             ctx.stroke();
 
-            // Draw Ledger Lines?
-            // Simple logic for C4 (Middle C)
-            if (currentNote.note === 'C' && currentNote.octave === 4) {
+            if (isPlaying && currentNoteIndex >= 0 && melody.length > 0) {
+                const currentNote = melody[currentNoteIndex];
+                if (!currentNote) return;
+
+                // X Position Logic: Traverse from Left to Right
+                // If only 1 note, center it.
+                // If multiple, map index 0 -> start, index N -> end.
+                const progress = currentNoteIndex / Math.max(melody.length - 1, 1);
+                const noteX = startX + (progress * staffWidth);
+
+                // Y Position Logic
+                const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+                const baseIndex = noteNames.indexOf(currentNote.note);
+                const octaveOffset = (currentNote.octave - 4) * 7;
+                const diatonicIndex = baseIndex + octaveOffset;
+
+                const E4Index = 2; // E4 is bottom line
+                const bottomLineY = staffTop + (4 * staffGap);
+                const noteY = bottomLineY - ((diatonicIndex - E4Index) * (staffGap / 2));
+
+                // Draw Previous Notes (Faint Trail) - Optional, adds "history" context so it's not just a floating dot
+                // Let's just draw the current one clearly moving first as requested. "Motion from one end to the other".
+
+                // Draw Note Head
+                const computedStyle = getComputedStyle(canvas);
+                const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#2196F3';
+
+                ctx.fillStyle = primaryColor;
                 ctx.beginPath();
-                ctx.strokeStyle = '#aaa';
-                ctx.moveTo(startX + staffWidth / 2 - staffGap, noteY);
-                ctx.lineTo(startX + staffWidth / 2 + staffGap, noteY);
-                ctx.stroke();
-            }
-            if (currentNote.note === 'A' && currentNote.octave === 5) {
-                // A5 is just above the staff
+                ctx.ellipse(noteX, noteY, (staffGap * 0.6) * 0.9, (staffGap * 0.4) * 0.9, 0, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Draw Stem
+                ctx.strokeStyle = primaryColor;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.strokeStyle = '#aaa';
-                ctx.moveTo(startX + staffWidth / 2 - staffGap, noteY);
-                ctx.lineTo(startX + staffWidth / 2 + staffGap, noteY);
+                if (diatonicIndex < 6) {
+                    // Up
+                    ctx.moveTo(noteX + ((staffGap * 0.6) * 0.9), noteY);
+                    ctx.lineTo(noteX + ((staffGap * 0.6) * 0.9), noteY - (staffGap * 3.5));
+                } else {
+                    // Down
+                    ctx.moveTo(noteX - ((staffGap * 0.6) * 0.9), noteY);
+                    ctx.lineTo(noteX - ((staffGap * 0.6) * 0.9), noteY + (staffGap * 3.5));
+                }
                 ctx.stroke();
-            }
-            // Logic can be generalized but this covers basic Middle C
+
+                // Draw Ledger Lines
+                if (currentNote.note === 'C' && currentNote.octave === 4) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#aaa';
+                    ctx.moveTo(noteX - staffGap, noteY);
+                    ctx.lineTo(noteX + staffGap, noteY);
+                    ctx.stroke();
+                }
+                if (currentNote.note === 'A' && currentNote.octave === 5) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#aaa';
+                    ctx.moveTo(noteX - staffGap, noteY);
+                    ctx.lineTo(noteX + staffGap, noteY);
+                    ctx.stroke();
+                }
+            }    // Logic can be generalized but this covers basic Middle C
         }
 
     }, [melody, currentNoteIndex, isPlaying]);

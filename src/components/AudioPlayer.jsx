@@ -418,7 +418,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.synthesizer}
                 initialPos={{ x: '50%', y: '20px' }}
-                initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '350px' }}
                 className="synth-controls-card"
             >
                 <SynthControls
@@ -437,8 +437,8 @@ const AudioPlayer = ({
 
             {/* Animation Card 1 (Bottom Left - Ground) */}
             <DraggableCard
-                initialPos={{ x: '20px', y: '440px' }}
-                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
+                initialPos={{ x: '20px', y: '390px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
                 className="synth-anim-card-1"
             >
                 <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
@@ -446,8 +446,8 @@ const AudioPlayer = ({
 
             {/* Animation Card 2 (Bottom Right - Bridge) */}
             <DraggableCard
-                initialPos={{ x: '50%', y: '440px' }}
-                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
+                initialPos={{ x: '50%', y: '390px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
                 className="synth-anim-card-2"
             >
                 <SynthAnimation isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthAnimation logic */}

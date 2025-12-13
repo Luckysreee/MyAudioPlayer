@@ -1,11 +1,6 @@
 import React from 'react';
 
 const SynthAnimation = ({ isPlaying, mode = 'ground', animationDuration = 8 }) => {
-    // Mode: 'ground' (Leafy/Green) or 'bridge' (Stone/Spikes)
-    // Sequential Logic: 
-    // Cycle = 8s.
-    // Ground: Walk 0-4s (0-50%).
-    // Bridge: Walk 4-8s (50-100%).
 
     return (
         <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
@@ -17,58 +12,48 @@ const SynthAnimation = ({ isPlaying, mode = 'ground', animationDuration = 8 }) =
                 zIndex: 0
             }}>
                 {/* Stars */}
-                <div style={{ position: 'absolute', top: '20%', left: '20%', width: '2px', height: '2px', background: '#fff', opacity: 0.8 }}></div>
-                <div style={{ position: 'absolute', top: '10%', left: '80%', width: '2px', height: '2px', background: '#fff', opacity: 0.6 }}></div>
-                <div style={{ position: 'absolute', top: '40%', left: '50%', width: '1px', height: '1px', background: '#fff', opacity: 0.9 }}></div>
+                <div style={{ position: 'absolute', top: '20%', left: '20%', width: '2px', height: '2px', background: '#fff', opacity: 0.8, borderRadius: '50%' }}></div>
+                <div style={{ position: 'absolute', top: '10%', left: '80%', width: '2px', height: '2px', background: '#fff', opacity: 0.6, borderRadius: '50%' }}></div>
+                <div style={{ position: 'absolute', top: '40%', left: '50%', width: '1px', height: '1px', background: '#fff', opacity: 0.9, borderRadius: '50%' }}></div>
             </div>
 
             {/* Terrain */}
             {mode === 'ground' ? (
-                // Ground Terrain
                 <div style={{
                     position: 'absolute', bottom: 0, left: 0, width: '100%', height: '30px',
-                    background: 'linear-gradient(to bottom, #2e7d32 0%, #1b5e20 100%)', // Realistic Green
-                    borderTop: '2px solid #4caf50',
+                    background: 'linear-gradient(to bottom, #66bb6a 0%, #2e7d32 100%)', // Brighter, cuter green
+                    borderTop: '3px solid #81c784',
                     zIndex: 1
-                }}>
-                    {/* Grass details */}
-                    {[...Array(10)].map((_, i) => (
-                        <div key={i} style={{
-                            position: 'absolute', bottom: '30px', left: `${i * 10 + 5}%`,
-                            width: '2px', height: '6px', background: '#4caf50'
-                        }}></div>
-                    ))}
-                </div>
+                }}></div>
             ) : (
-                // Bridge Terrain
                 <>
                     <div style={{
                         position: 'absolute', bottom: '30px', left: 0, width: '100%', height: '40px',
-                        background: 'repeating-linear-gradient(90deg, #3e2723 0, #3e2723 10px, #4e342e 10px, #4e342e 20px)', // Wood/Stone texture
-                        borderTop: '4px solid #5d4037',
+                        background: '#795548', // Brown wood
+                        borderTop: '4px solid #8d6e63',
                         zIndex: 1
                     }}></div>
-                    {/* Spikes Underneath */}
+                    {/* Soft Spikes */}
                     <div style={{ position: 'absolute', bottom: '0', left: '0', width: '100%', height: '30px', display: 'flex', justifyContent: 'space-around', zIndex: 0 }}>
                         {[...Array(8)].map((_, i) => (
                             <div key={i} style={{
                                 width: '0', height: '0',
                                 borderLeft: '10px solid transparent', borderRight: '10px solid transparent',
-                                borderBottom: '30px solid #b71c1c'
+                                borderBottom: '30px solid #ef5350', opacity: 0.7 // Muted Red (Softer)
                             }}></div>
                         ))}
                     </div>
                 </>
             )}
 
-            {/* Walking Person Container */}
+            {/* CUTE WALKER (Chibi Style) */}
             <div
-                className={`realistic-walker walker-${mode}`}
+                className={`cute-walker walker-${mode}`}
                 style={{
                     position: 'absolute',
-                    bottom: mode === 'bridge' ? '70px' : '30px', // Adjust for terrain height
-                    left: '-50px',
-                    width: '30px',
+                    bottom: mode === 'bridge' ? '70px' : '30px',
+                    left: '-60px',
+                    width: '40px',
                     height: '60px',
                     zIndex: 2,
                     animation: isPlaying
@@ -78,64 +63,66 @@ const SynthAnimation = ({ isPlaying, mode = 'ground', animationDuration = 8 }) =
                         : 'none',
                 }}
             >
-                {/* SVG Character (Simple Silhouette for realism/style) */}
-                <svg width="30" height="60" viewBox="0 0 30 60" fill="none">
-                    {/* Head */}
-                    <circle cx="15" cy="10" r="8" fill="#ffb74d" />
-                    {/* Body */}
-                    <rect x="10" y="18" width="10" height="25" fill="#1565c0" rx="2" />
-                    {/* Arms (Animated via CSS in SVG not easy, so use separate divs for limbs if possible, or just SVG group) */}
-                </svg>
+                {/* HEAD (Big & Round) */}
+                <div style={{
+                    position: 'absolute', top: '0', left: '0', width: '40px', height: '40px',
+                    background: '#ffcc80', borderRadius: '50%',
+                    boxShadow: 'inset -2px -2px 0 rgba(0,0,0,0.1)'
+                }}>
+                    {/* Eyes */}
+                    <div style={{ position: 'absolute', top: '15px', left: '10px', width: '6px', height: '6px', background: '#333', borderRadius: '50%' }}></div>
+                    <div style={{ position: 'absolute', top: '15px', right: '10px', width: '6px', height: '6px', background: '#333', borderRadius: '50%' }}></div>
+                    {/* Smile */}
+                    <div style={{
+                        position: 'absolute', top: '22px', left: '14px', width: '12px', height: '6px',
+                        borderBottom: '2px solid #e65100', borderRadius: '50%'
+                    }}></div>
+                    {/* Blush */}
+                    <div style={{ position: 'absolute', top: '20px', left: '6px', width: '6px', height: '3px', background: '#ffab91', borderRadius: '50%', opacity: 0.6 }}></div>
+                    <div style={{ position: 'absolute', top: '20px', right: '6px', width: '6px', height: '3px', background: '#ffab91', borderRadius: '50%', opacity: 0.6 }}></div>
+                </div>
 
-                {/* Dynamic Limbs (Divs for easy CSS animation) */}
+                {/* BODY (Small) */}
+                <div style={{
+                    position: 'absolute', top: '35px', left: '10px', width: '20px', height: '20px',
+                    background: '#42a5f5', borderRadius: '10px', zIndex: -1
+                }}></div>
+
+                {/* LIMBS (Simple Noodles) */}
                 {/* Left Leg */}
                 <div style={{
-                    position: 'absolute', top: '40px', left: '8px', width: '6px', height: '20px', background: '#333',
-                    transformOrigin: 'top',
-                    animation: isPlaying ? 'legMove 0.8s infinite alternate' : 'none',
-                    borderRadius: '2px'
+                    position: 'absolute', top: '50px', left: '12px', width: '6px', height: '12px', background: '#333',
+                    transformOrigin: 'top', borderRadius: '3px',
+                    animation: isPlaying ? 'legBounce 0.4s infinite alternate' : 'none'
                 }}></div>
                 {/* Right Leg */}
                 <div style={{
-                    position: 'absolute', top: '40px', left: '16px', width: '6px', height: '20px', background: '#333',
-                    transformOrigin: 'top',
-                    animation: isPlaying ? 'legMove 0.8s infinite alternate-reverse' : 'none',
-                    borderRadius: '2px'
-                }}></div>
-                {/* Arm */}
-                <div style={{
-                    position: 'absolute', top: '20px', left: '12px', width: '6px', height: '18px', background: '#ffb74d',
-                    transformOrigin: 'top',
-                    borderRadius: '2px',
-                    animation: isPlaying ? 'armMove 0.8s infinite alternate' : 'none'
+                    position: 'absolute', top: '50px', left: '22px', width: '6px', height: '12px', background: '#333',
+                    transformOrigin: 'top', borderRadius: '3px',
+                    animation: isPlaying ? 'legBounce 0.4s infinite alternate-reverse' : 'none'
                 }}></div>
 
             </div>
 
             <style>{`
-                /* Keyframes for Sequential Movement */
                 @keyframes walkGround {
-                    0% { left: -50px; opacity: 1; }
+                    0% { left: -60px; opacity: 1; }
                     48% { left: 110%; opacity: 1; }
                     48.01% { opacity: 0; }
                     100% { opacity: 0; }
                 }
 
                 @keyframes walkBridge {
-                    0% { opacity: 0; left: -50px; }
-                    50% { opacity: 0; left: -50px; } /* Wait for Ground cycle */
-                    50.01% { opacity: 1; left: -50px; } /* Start */
+                    0% { opacity: 0; left: -60px; }
+                    50% { opacity: 0; left: -60px; }
+                    50.01% { opacity: 1; left: -60px; }
                     98% { left: 110%; opacity: 1; }
-                    100% { left: 110%; opacity: 0; } /* Reset */
+                    100% { left: 110%; opacity: 0; }
                 }
 
-                @keyframes legMove {
-                    from { transform: rotate(-25deg); }
-                    to { transform: rotate(25deg); }
-                }
-                @keyframes armMove {
-                    from { transform: rotate(20deg); }
-                    to { transform: rotate(-20deg); }
+                @keyframes legBounce {
+                    from { transform: translateY(0); }
+                    to { transform: translateY(-4px) rotate(10deg); } /* Bouncy walk */
                 }
             `}</style>
         </div>
