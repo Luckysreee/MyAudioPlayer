@@ -1,37 +1,130 @@
-# MyAudioPlayer (Hybrid Audio Studio)
+# Audio Studio (Hybrid Audio Workstation)
 
-A hybrid web-based audio application that combines traditional audio file playback with a real-time synthesizer. This project is built for accessibility, multilingual usability, and ease of extension.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![React](https://img.shields.io/badge/React-18-blue)
+![Vite](https://img.shields.io/badge/Vite-4-purple)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
+A comprehensive web-based audio studio that combines file playback, real-time synthesis, and melody composition. Built with React and the Web Audio API, it features a completely modular, draggable interface designed for accessibility and creativity.
+
+## Table of Contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation and Setup](#installation-and-setup)
+- [Usage](#usage)
+  - [Audio Player](#audio-player)
+  - [Synthesizer](#synthesizer)
+  - [Stave Input](#stave-input-melody-creator)
+- [Project Structure](#project-structure)
+- [Technologies Used](#technologies-used)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+---
 
 ## Features
 
-### Hybrid Audio Engine
+### 🎛️ Modular Draggable Interface
+* **Customizable Layout**: All main components (Player, Visualizer, Controls, Playlist, Stave) are draggable cards. Organize your workspace exactly how you like it.
+* **Layout Reset**: Quickly restore the default layout with a single click.
+* **Responsive Design**: Adapts to different screen sizes with a clean, grid-based architecture.
 
-* Audio Player Mode supports standard playback of local audio files, including play, pause, stop, seeking, and volume adjustment.
-* Synthesizer Mode generates tones using the Web Audio API oscillator with selectable waveforms and adjustable frequency.
-* A unified waveform visualizer displays real-time audio output from both the audio player and synthesizer.
+### 🎵 1. Audio Player Mode
+* **Complete Playback Control**: Play, pause, stop, seek, and **Loop** tracks.
+* **Smart Playlist**: Drag and drop files to upload. Reorder tracks, remove items, and clear the list.
+* **Auto-Advance**: The player automatically advances to the next track or stops at the end of the playlist.
+* **Loop Mode**: Seamlessly repeat your favorite tracks.
 
-### Playlist Management
+### 🎹 2. Synthesizer Mode
+* **Real-time Generation**: Generate tones using standard waveforms (Sine, Square, Sawtooth, Triangle) and Noise types (White, Pink).
+* **Interactive Visuals**: Includes 3D-style canvas animations (Ground, Bridge) that react to the synth's state.
+* **Frequency Control**: Fine-tune the oscillator frequency for precise sound design.
 
-* Drag and drop files to build a playlist.
-* Reorder tracks, remove individual entries, or clear the entire playlist.
-* Automatic progression to the next track when a file finishes playing.
+### 🎼 3. Stave Input Mode (Melody Creator)
+* **Visual Composition**: Create melodies by adding notes to a virtual stave.
+* **Multiple Input Methods**:
+    * **Piano**: Click keys on a virtual piano (supports full octaves).
+    * **Builder**: Select notes and durations from dropdowns.
+    * **Text**: Input notes using text format (e.g., `C4 0.5`).
+* **Melody Table**: Reorder, edit, and delete notes in a structured table view.
+* **Playback**: Listen to your composition synthesized instantly.
 
-### Multilingual Support
+### 🌍 Multilingual Support
+The interface supports four languages with instant switching:
+* **English**
+* **Spanish** (Español)
+* **French** (Français)
+* **Swahili** (Kiswahili)
 
-The interface includes four languages:
+### ♿ Accessibility and Theming
+* **High-Contrast Mode**: Enhanced visibility for accessibility.
+* **Zoom Controls**: Adjust interface scaling from 50% to 150%.
+* **Theme Support**: Switch between Dark (Default) and Light themes.
 
-* English
-* Spanish
-* French
-* Swahili
+---
 
-Language switching is immediate and applies across all interface elements.
+## Screenshots
 
-### Accessibility and Customization
+*(Placeholder for Screenshots)*
 
-* High-contrast accessibility mode for improved visibility.
-* Adjustable text scaling from 80 percent to 200 percent.
-* Light and dark theme options.
+> **Note**: This application is a visual experience. We recommend running it locally to see the real-time visualizations and animations.
+
+---
+
+## Installation and Setup
+
+### Local Environment
+
+1. **Prerequisites**: Ensure you have [Node.js](https://nodejs.org/) installed.
+2. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Luckysreee/MyAudioPlayer.git
+   cd MyAudioPlayer
+   ```
+3. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+5. **Open**: The terminal will show a local URL (usually `http://localhost:5173`). Open this in your browser.
+
+### GitHub Codespaces
+
+1. Open the repository on GitHub.
+2. Select **Code** > **Codespaces** > **Create codespace on main**.
+3. In the terminal: `npm install && npm run dev`.
+
+---
+
+## Usage
+
+### Navigation
+Use the header tabs to switch between **Audio Player** (Playback), **Synthesizer** (Tone Generation), and **Stave Input** (Composition) modes. Use the refresh icon (↺) to reset the draggable layout if cards get disorganized.
+
+### Audio Player
+1.  **Upload**: Drag audio files onto the upload card area or click to browse files.
+2.  **Playlist**: Click a track to play. Use the Up/Down arrows to reorder tracks.
+3.  **Controls**: Use the main player card to Play, Pause, Toggle Loop, or adjust Volume.
+
+### Synthesizer
+1.  **Generate**: Click "Start" to hear the tone.
+2.  **Modify**: Change the waveform (Sine, Square, Noise, etc.) and use the slider to adjust frequency.
+3.  **Visuals**: Watch the canvas animations (Bridge/Ground) react to your sound.
+
+### Stave Input (Melody Creator)
+1.  **Compose**: Choose an input mode (Piano, Builder, or Text).
+2.  **Add Notes**:
+    *   **Piano**: Set Duration/Octave and click keys.
+    *   **Text**: Type notes like `C4 0.5` (Note+Octave Duration) and click "Add".
+3.  **Edit**: Use the Melody Table to reorder or delete notes.
+4.  **Play**: Click "Play Melody" to hear your composition synthesized.
+
+---
 
 ## Project Structure
 
@@ -42,71 +135,59 @@ Language switching is immediate and applies across all interface elements.
   index.html
   /src
     main.jsx
-    App.jsx
+    App.jsx               # Main Layout & State Manager
     /components
-      AudioPlayer.jsx
-      Playlist.jsx
-      Visualizer.jsx
-      LanguageSelector.jsx
-      AccessibilityToggle.jsx
-    /i18n
+      AudioPlayer.jsx     # Core Logic & Draggable Container
+      DraggableCard.jsx   # UI wrapper for draggable elements
+      StaveInput.jsx      # Melody Editor
+      Piano.jsx           # Virtual Piano
+      Visualizer.jsx      # Audio Visualizer (Canvas)
+      Playlist.jsx        # Playlist Logic
+      SynthControls.jsx   # Synth UI
+      SynthAnimation.jsx  # 3D Canvas Animations
+      Footer.jsx
+    /i18n                 # Localization Files
       en.json
       es.json
       fr.json
       sw.json
     /styles
-      base.css
-      accessibility.css
+      base.css            # Core Styles
+      accessibility.css   # High Contrast Overrides
 ```
-
-## Installation and Setup
-
-### Local Environment
-
-1. Install Node.js LTS.
-2. Navigate to the project directory.
-3. Run the following commands:
-
-```
-npm install
-npm run dev
-```
-
-The development server URL will appear in the terminal.
-
-### GitHub Codespaces
-
-1. Push the project to a GitHub repository.
-2. Open the repository on GitHub.
-3. Select Code, then choose Codespaces, and create a codespace on the main branch.
-4. Inside the codespace terminal, run:
-
-```
-npm install
-npm run dev
-```
-
-## Technologies Used
-
-* React
-* Vite
-* Web Audio API
-* CSS variables for dynamic theming
-
-## Usage
-
-### Audio Player Mode
-
-Load audio files into the playlist, then use the playback controls. The visualizer activates whenever audio is playing.
-
-### Synthesizer Mode
-
-Select the waveform type and adjust the frequency to generate tones. Control output volume directly in the interface. The visualizer responds to the generated signal.
-
-### Accessibility and Languages
-
-Language, theme, contrast, and zoom controls are available directly in the interface header.
 
 ---
 
-* vibe-coded using google antigravity
+## Technologies Used
+
+* **React**: UI Component Library
+* **Vite**: Build Tool
+* **Web Audio API**: Audio Synthesis and Analysis
+* **CSS Variables**: Dynamic Theming and Responsiveness
+
+---
+
+## Contributing
+
+Contributions are welcome!
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## Contact
+
+Project Link: [https://github.com/Luckysreee/MyAudioPlayer](https://github.com/Luckysreee/MyAudioPlayer)
+
+---
+
+*vibe-coded using google antigravity*
