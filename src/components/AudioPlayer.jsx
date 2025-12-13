@@ -437,8 +437,8 @@ const AudioPlayer = ({
 
             {/* Animation Card 1 (Bottom Left - Ground) */}
             <DraggableCard
-                initialPos={{ x: '20px', y: '390px' }}
-                initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
+                initialPos={{ x: '20px', y: '440px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
                 className="synth-anim-card-1"
             >
                 <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
