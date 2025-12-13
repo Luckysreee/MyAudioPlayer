@@ -48,7 +48,14 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
                             <button
                                 onClick={(e) => moveUp(index, e)}
                                 disabled={index === 0}
-                                style={{ padding: '2px', background: 'transparent', border: 'none', cursor: index === 0 ? 'default' : 'pointer', opacity: index === 0 ? 0.3 : 1 }}
+                                style={{
+                                    padding: '2px',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: index === 0 ? 'default' : 'pointer',
+                                    opacity: index === 0 ? 0.3 : 1,
+                                    color: index === currentFileIndex ? '#fff' : 'var(--text-color)'
+                                }}
                                 title="Move Up"
                             >
                                 ▲
@@ -56,7 +63,14 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
                             <button
                                 onClick={(e) => moveDown(index, e)}
                                 disabled={index === files.length - 1}
-                                style={{ padding: '2px', background: 'transparent', border: 'none', cursor: index === files.length - 1 ? 'default' : 'pointer', opacity: index === files.length - 1 ? 0.3 : 1 }}
+                                style={{
+                                    padding: '2px',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: index === files.length - 1 ? 'default' : 'pointer',
+                                    opacity: index === files.length - 1 ? 0.3 : 1,
+                                    color: index === currentFileIndex ? '#fff' : 'var(--text-color)'
+                                }}
                                 title="Move Down"
                             >
                                 ▼
@@ -66,7 +80,15 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
                                     e.stopPropagation();
                                     onDelete(index);
                                 }}
-                                style={{ marginLeft: '0.5rem', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid #666' }}
+                                style={{
+                                    marginLeft: '0.5rem',
+                                    padding: '0.2rem 0.5rem',
+                                    fontSize: '0.8rem',
+                                    background: 'transparent',
+                                    border: '1px solid currentColor',
+                                    color: index === currentFileIndex ? '#fff' : 'var(--text-color)',
+                                    borderColor: index === currentFileIndex ? '#fff' : '#666'
+                                }}
                                 aria-label="Delete"
                             >
                                 ❌

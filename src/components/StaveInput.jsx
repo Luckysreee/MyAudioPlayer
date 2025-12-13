@@ -102,7 +102,8 @@ export const MelodyTable = ({ melody, onDelete, onReorder, translations, current
                                                 background: 'transparent',
                                                 border: 'none',
                                                 cursor: idx === 0 ? 'default' : 'pointer',
-                                                opacity: idx === 0 ? 0.3 : 1
+                                                opacity: idx === 0 ? 0.3 : 1,
+                                                color: idx === currentNoteIndex ? '#fff' : 'var(--text-color)'
                                             }}
                                             title="Move Up"
                                         >
@@ -117,7 +118,8 @@ export const MelodyTable = ({ melody, onDelete, onReorder, translations, current
                                                 background: 'transparent',
                                                 border: 'none',
                                                 cursor: idx === melody.length - 1 ? 'default' : 'pointer',
-                                                opacity: idx === melody.length - 1 ? 0.3 : 1
+                                                opacity: idx === melody.length - 1 ? 0.3 : 1,
+                                                color: idx === currentNoteIndex ? '#fff' : 'var(--text-color)'
                                             }}
                                             title="Move Down"
                                         >

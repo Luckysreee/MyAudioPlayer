@@ -5,6 +5,7 @@ import Visualizer from './Visualizer';
 import Playlist from './Playlist';
 import SynthControls from './SynthControls';
 import StaveInput, { StaveControls, MelodyTable } from './StaveInput';
+import StaveVisualizer from './StaveVisualizer';
 
 const AudioPlayer = ({
     mode,
@@ -415,50 +416,20 @@ const AudioPlayer = ({
 
             {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
             <DraggableCard
-                title="Audio Wave"
+                title="Stave Animation"
                 initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '480px', height: 'calc(100% - 522px)' }}
+                initialSize={{ width: '1030px', height: 'calc(100% - 522px)' }}
                 className="stave-animation-card"
             >
                 <div style={{
                     width: '100%',
                     height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%)',
+                    background: '#fff',
                     borderRadius: '8px',
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
-                    <div style={{
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-around',
-                        padding: '20px'
-                    }}>
-                        {[...Array(12)].map((_, i) => (
-                            <div
-                                key={i}
-                                style={{
-                                    width: '12px',
-                                    height: isStavePlaying ? `${30 + Math.random() * 70}%` : '20%',
-                                    background: 'linear-gradient(to top, var(--primary-color), var(--secondary-color))',
-                                    borderRadius: '6px',
-                                    transition: 'height 0.3s ease',
-                                    animation: isStavePlaying ? `wave ${0.5 + i * 0.1}s ease-in-out infinite alternate` : 'none'
-                                }}
-                            />
-                        ))}
-                    </div>
-                    <style>{`
-                        @keyframes wave {
-                            0% { height: 20%; }
-                            100% { height: 80%; }
-                        }
-                    `}</style>
+                    <StaveVisualizer melody={melody} isPlaying={isStavePlaying} currentNoteIndex={currentNoteIndex} />
                 </div>
             </DraggableCard>
 
