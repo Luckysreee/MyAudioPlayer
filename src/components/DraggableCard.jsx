@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const DraggableCard = ({ children, title, initialPos, initialSize, className = '', hideHeader = false }) => {
+const DraggableCard = ({ children, title, initialPos, initialSize, className = '', hideHeader = false, scale = 1 }) => {
     const [pos, setPos] = useState(initialPos || { x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [rel, setRel] = useState(null); // Relative position of cursor
     const cardRef = useRef(null);
 
-    // Reset position if initialPos changes (e.g. Layout Reset)
-    useEffect(() => {
-        if (initialPos) setPos(initialPos);
-    }, [initialPos]);
+    // Removed auto-reset of pos on initialPos change to prevent snapping back
 
     const onMouseDown = (e) => {
         // Prevent drag if clicking on controls
@@ -19,7 +16,7 @@ const DraggableCard = ({ children, title, initialPos, initialSize, className = '
         setIsDragging(true);
         const rect = cardRef.current.getBoundingClientRect();
 
-        // Calculate offset from top-left of card
+        // Calculate offset from top-left of card (Screen Pixels)
         setRel({
             x: e.clientX - rect.left,
             y: e.clientY - rect.top
@@ -32,21 +29,11 @@ const DraggableCard = ({ children, title, initialPos, initialSize, className = '
     const onMouseMove = (e) => {
         if (!isDragging) return;
 
-        // Calculate new position relative to parent (.app-content)
-        // We need to account for the parent's offset? 
-        // Actually, since position is fixed/absolute relative to closest positioned ancestor (.app-content)
-        // We just need (Mouse - Rel - ParentOffset). 
-        // Simpler: Just use page coordinates if parent is full screen? 
-        // Better: Calculate relative to window, then subtracting parent offset might be needed if parent isn't at 0,0.
-        // Assuming .app-content provides the context.
-
-        // For simplicity in this "Free" mode, let's use fixed or absolute positioning.
-        // If parent is relative, 'top/left' works.
-
         const parentRect = cardRef.current.parentElement.getBoundingClientRect();
 
-        const newX = e.clientX - parentRect.left - rel.x;
-        const newY = e.clientY - parentRect.top - rel.y;
+        // Calculate position in Scaling Context
+        const newX = (e.clientX - parentRect.left - rel.x) / scale;
+        const newY = (e.clientY - parentRect.top - rel.y) / scale;
 
         setPos({ x: newX, y: newY });
     };

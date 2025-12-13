@@ -24,7 +24,8 @@ const AudioPlayer = ({
     dragHandlers,
     onUploadClick,
     onReorder,
-    onReorderPlaylist
+    onReorderPlaylist,
+    scale = 1
 }) => {
     const audioRef = useRef(null);
     const audioContextRef = useRef(null);
@@ -242,10 +243,16 @@ const AudioPlayer = ({
             if (!sourceRef.current && audioContextRef.current) {
                 const src = audioContextRef.current.createMediaElementSource(audioRef.current);
                 sourceRef.current = src;
-                src.connect(analyserRef.current);
+                // Connect to GAIN node first, so volume slider works
+                if (gainNodeRef.current) {
+                    src.connect(gainNodeRef.current);
+                } else {
+                    src.connect(analyserRef.current);
+                }
             }
             audioRef.current.src = URL.createObjectURL(currentFile);
-            audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error(e));
+            // Removed auto-play: audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error(e));
+            // Just load it.
         } else if (audioRef.current) {
             audioRef.current.pause();
             setIsPlaying(false);
@@ -288,6 +295,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '16px', y: '16px' }}
                 initialSize={{ width: 'calc(70% - 24px)', height: 'calc(65% - 24px)' }}
                 className="controls-card"
+                scale={scale}
             >
                 <div className="visualizer-container" style={{ flex: 1, minHeight: '50%', background: '#000', borderRadius: '8px', overflow: 'hidden', position: 'relative' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isPlaying || isSynthPlaying} />
@@ -379,6 +387,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '16px', y: 'calc(65% + 8px)' }}
                 initialSize={{ width: 'calc(70% - 24px)', height: 'calc(35% - 24px)' }}
                 className="upload-card"
+                scale={scale}
             >
                 <div {...dragHandlers} style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '2px dashed var(--border-color)', borderRadius: 'var(--radius-md)', background: 'rgba(0,0,0,0.2)' }} onClick={onUploadClick}>
                     <h3 style={{ margin: '0', color: 'var(--text-main)', fontSize: '1.1rem' }}>
@@ -396,6 +405,7 @@ const AudioPlayer = ({
                 initialPos={{ x: 'calc(70% + 8px)', y: '16px' }}
                 initialSize={{ width: 'calc(30% - 24px)', height: 'calc(100% - 32px)' }}
                 className="playlist-card"
+                scale={scale}
             >
                 <Playlist
                     files={files}
@@ -418,6 +428,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '20px', y: '20px' }}
                 initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
                 className="synth-visualizer-card"
+                scale={scale}
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
@@ -430,6 +441,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '50%', y: '20px' }}
                 initialSize={{ width: 'calc(50% - 30px)', height: '350px' }}
                 className="synth-controls-card"
+                scale={scale}
             >
                 <SynthControls
                     frequency={frequency}
@@ -450,6 +462,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '20px', y: '440px' }}
                 initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
                 className="synth-anim-card-1"
+                scale={scale}
             >
                 <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
             </DraggableCard>
@@ -459,6 +472,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '50%', y: '390px' }}
                 initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
                 className="synth-anim-card-2"
+                scale={scale}
             >
                 <SynthAnimation isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthAnimation logic */}
             </DraggableCard>
@@ -473,6 +487,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '16px', y: '16px' }}
                 initialSize={{ width: '480px', height: '460px' }}
                 className="stave-editor-card"
+                scale={scale}
             >
                 <StaveInput
                     melody={melody}
@@ -489,6 +504,7 @@ const AudioPlayer = ({
                 initialSize={{ width: '1030px', height: '110px' }}
                 className="stave-animation-card"
                 hideHeader={true}
+                scale={scale}
             >
                 <div style={{
                     width: '100%',
@@ -509,6 +525,7 @@ const AudioPlayer = ({
                 initialPos={{ x: '516px', y: '16px' }}
                 initialSize={{ width: '532px', height: '460px' }}
                 className="stave-visualizer-controls-card"
+                scale={scale}
             >
                 <div className="visualizer-container" style={{ width: '100%', height: '60%', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
@@ -530,6 +547,7 @@ const AudioPlayer = ({
                 initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
                 initialSize={{ width: '450px', height: 'calc(100% - 26px)' }}
                 className="stave-table-card"
+                scale={scale}
             >
                 <MelodyTable
                     melody={melody}

@@ -187,6 +187,7 @@ function App() {
                 }}>
                     <AudioPlayer
                         key={resetKey}
+                        scale={zoomLevel / 100}
                         mode={mode}
                         setMode={setMode}
                         currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
