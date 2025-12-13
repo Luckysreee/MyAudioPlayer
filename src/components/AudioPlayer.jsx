@@ -34,6 +34,7 @@ const AudioPlayer = ({
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [isLooping, setIsLooping] = useState(false);
 
     // Synth Refs
     const oscillatorRef = useRef(null);
@@ -311,297 +312,282 @@ const AudioPlayer = ({
                     {!currentFile && !isSynthPlaying && <div className="absolute-center" style={{ opacity: 0.3 }}>NO SIGNAL</div>}
                 </div>
 
-                const [isLooping, setIsLooping] = useState(false);
 
-    // ... (keeps existing volume/synth logic)
+                <div className="controls-area" style={{ padding: '0 2rem', display: 'flex', flexDirection: 'column', height: '50%', justifyContent: 'center' }}>
+                    {/* Timestamps */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                    </div>
 
-    // Handle File Playback
-    useEffect(() => {
-                    // ... (existing playback logic)
-                }, [currentFile]);
+                    {/* Progress Slider */}
+                    <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        value={currentTime}
+                        onChange={(e) => {
+                            const time = Number(e.target.value);
+                            if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
+                        }}
+                        className="no-drag custom-slider"
+                        style={{ width: '100%', marginBottom: '1.5rem', cursor: 'pointer' }}
+                    />
 
-    // ... methods ...
+                    {/* Controls Row: Volume Left | Center Play | Loop Right */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
 
-    // PLAYER MODE LAYOUT
-    const renderPlayerMode = () => (
-                <>
-                    {/* ... Visualizer ... */}
-
-                    <div className="controls-area" style={{ padding: '0 2rem', display: 'flex', flexDirection: 'column', height: '50%', justifyContent: 'center' }}>
-                        {/* Timestamps */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>
-                            <span>{formatTime(currentTime)}</span>
-                            <span>{formatTime(duration)}</span>
+                        {/* Volume (Left Side) */}
+                        <div className="volume-control flex-center gap-sm" style={{ justifySelf: 'start', minWidth: '140px' }}>
+                            <button className="btn-icon-small" onClick={() => handleVolumeChange({ target: { value: volume > 0 ? 0 : 0.5 } })} title="Mute/Unmute">
+                                {volume === 0 ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0a7 7 0 0 0-2-4.9"></path></svg>
+                                ) : (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" /></svg>
+                                )}
+                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '80px', gap: '2px' }}>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={volume}
+                                    onChange={handleVolumeChange}
+                                    className="no-drag custom-slider"
+                                    style={{ width: '100%', height: '4px' }}
+                                    title={`Volume: ${Math.round(volume * 100)}%`}
+                                />
+                            </div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', minWidth: '35px' }}>{Math.round(volume * 100)}%</span>
                         </div>
 
-                        {/* Progress Slider */}
-                        <input
-                            type="range"
-                            min="0"
-                            max={duration || 0}
-                            value={currentTime}
-                            onChange={(e) => {
-                                const time = Number(e.target.value);
-                                if (audioRef.current) { audioRef.current.currentTime = time; setCurrentTime(time); }
-                            }}
-                            className="no-drag custom-slider"
-                            style={{ width: '100%', marginBottom: '1.5rem', cursor: 'pointer' }}
-                        />
+                        {/* Playback Buttons (Center) */}
+                        <div className="flex-center gap-xl">
+                            <button onClick={onPrev} disabled={!currentFile} className="btn-icon" title="Previous">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+                            </button>
+                            <button onClick={togglePlay} disabled={!currentFile} className="btn-icon-large" title={isPlaying ? "Pause" : "Play"}>
+                                {isPlaying ? (
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                                ) : (
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M5 3l14 9-14 9V3z" /></svg>
+                                )}
+                            </button>
+                            <button onClick={onNext} disabled={!currentFile} className="btn-icon" title="Next">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                            </button>
+                        </div>
 
-                        {/* Controls Row: Volume Left | Center Play | Loop Right */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
-
-                            {/* Volume (Left Side) */}
-                            <div className="volume-control flex-center gap-sm" style={{ justifySelf: 'start', minWidth: '140px' }}>
-                                <button className="btn-icon-small" onClick={() => handleVolumeChange({ target: { value: volume > 0 ? 0 : 0.5 } })} title="Mute/Unmute">
-                                    {volume === 0 ? (
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0a7 7 0 0 0-2-4.9"></path></svg>
-                                    ) : (
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" /></svg>
-                                    )}
-                                </button>
-                                <div style={{ display: 'flex', flexDirection: 'column', width: '80px', gap: '2px' }}>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="1"
-                                        step="0.01"
-                                        value={volume}
-                                        onChange={handleVolumeChange}
-                                        className="no-drag custom-slider"
-                                        style={{ width: '100%', height: '4px' }}
-                                        title={`Volume: ${Math.round(volume * 100)}%`}
-                                    />
-                                </div>
-                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', minWidth: '35px' }}>{Math.round(volume * 100)}%</span>
-                            </div>
-
-                            {/* Playback Buttons (Center) */}
-                            <div className="flex-center gap-xl">
-                                <button onClick={onPrev} disabled={!currentFile} className="btn-icon" title="Previous">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-                                </button>
-                                <button onClick={togglePlay} disabled={!currentFile} className="btn-icon-large" title={isPlaying ? "Pause" : "Play"}>
-                                    {isPlaying ? (
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                                    ) : (
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M5 3l14 9-14 9V3z" /></svg>
-                                    )}
-                                </button>
-                                <button onClick={onNext} disabled={!currentFile} className="btn-icon" title="Next">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-                                </button>
-                            </div>
-
-                            {/* Loop Button (Right Side) */}
-                            <div style={{ justifySelf: 'end', display: 'flex', gap: '0.5rem' }}>
-                                <button
-                                    onClick={() => setIsLooping(!isLooping)}
-                                    className="btn-icon"
-                                    title={translations.loop || "Loop"}
-                                    style={{ color: isLooping ? 'var(--primary-color)' : 'var(--text-muted)', opacity: isLooping ? 1 : 0.7 }}
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-                                </button>
-                            </div>
+                        {/* Loop Button (Right Side) */}
+                        <div style={{ justifySelf: 'end', display: 'flex', gap: '0.5rem' }}>
+                            <button
+                                onClick={() => setIsLooping(!isLooping)}
+                                className="btn-icon"
+                                title={translations.loop || "Loop"}
+                                style={{ color: isLooping ? 'var(--primary-color)' : 'var(--text-muted)', opacity: isLooping ? 1 : 0.7 }}
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                            </button>
                         </div>
                     </div>
-                    <audio
-                        ref={audioRef}
-                        onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
-                        onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
-                        onEnded={onEnded}
-                        loop={isLooping}
-                        crossOrigin="anonymous"
-                    />
-                </DraggableCard>
+                </div>
+                <audio
+                    ref={audioRef}
+                    onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
+                    onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
+                    onEnded={onEnded}
+                    loop={isLooping}
+                    crossOrigin="anonymous"
+                />
+            </DraggableCard>
 
-                {/* 2. Upload Card (Bottom-Left: 35%) */}
-                <DraggableCard
-                    title={translations.upload}
-                    initialPos={{ x: '16px', y: 'calc(65% + 8px)' }}
-                    initialSize={{ width: 'calc(70% - 24px)', height: 'calc(35% - 24px)' }}
-                    className="upload-card"
-                    scale={scale}
-                >
-                    <div {...dragHandlers} style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '2px dashed var(--border-color)', borderRadius: 'var(--radius-md)', background: 'rgba(0,0,0,0.2)' }} onClick={onUploadClick}>
-                        <h3 style={{ margin: '0', color: 'var(--text-main)', fontSize: '1.1rem' }}>
-                            {translations.upload || "Upload Audio"}
-                        </h3>
-                        <p style={{ margin: '0.5rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                            {translations.uploadDesc || "Drag & drop files or click to browse"}
-                        </p>
-                    </div>
-                </DraggableCard>
+            {/* 2. Upload Card (Bottom-Left: 35%) */}
+            <DraggableCard
+                title={translations.upload}
+                initialPos={{ x: '16px', y: 'calc(65% + 8px)' }}
+                initialSize={{ width: 'calc(70% - 24px)', height: 'calc(35% - 24px)' }}
+                className="upload-card"
+                scale={scale}
+            >
+                <div {...dragHandlers} style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '2px dashed var(--border-color)', borderRadius: 'var(--radius-md)', background: 'rgba(0,0,0,0.2)' }} onClick={onUploadClick}>
+                    <h3 style={{ margin: '0', color: 'var(--text-main)', fontSize: '1.1rem' }}>
+                        {translations.upload || "Upload Audio"}
+                    </h3>
+                    <p style={{ margin: '0.5rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                        {translations.uploadDesc || "Drag & drop files or click to browse"}
+                    </p>
+                </div>
+            </DraggableCard>
 
-                {/* 3. Playlist Card (Sidebar: 30%) */}
-                <DraggableCard
-                    title={translations.playlist}
-                    initialPos={{ x: 'calc(70% + 8px)', y: '16px' }}
-                    initialSize={{ width: 'calc(30% - 24px)', height: 'calc(100% - 32px)' }}
-                    className="playlist-card"
-                    scale={scale}
-                >
-                    <Playlist
-                        files={files}
-                        currentFileIndex={currentFileIndex}
-                        onPlay={playFile}
-                        onReorder={onReorder}
-                        onDelete={handleDelete}
-                        onClearAll={handleClearAll}
-                        translations={translations}
-                    />
-                </DraggableCard>
-            </>
-            );
+            {/* 3. Playlist Card (Sidebar: 30%) */}
+            <DraggableCard
+                title={translations.playlist}
+                initialPos={{ x: 'calc(70% + 8px)', y: '16px' }}
+                initialSize={{ width: 'calc(30% - 24px)', height: 'calc(100% - 32px)' }}
+                className="playlist-card"
+                scale={scale}
+            >
+                <Playlist
+                    files={files}
+                    currentFileIndex={currentFileIndex}
+                    onPlay={playFile}
+                    onReorder={onReorder}
+                    onDelete={handleDelete}
+                    onClearAll={handleClearAll}
+                    translations={translations}
+                />
+            </DraggableCard>
+        </>
+    );
 
     const renderSynthMode = () => (
-            <>
-                {/* Visualizer Card (Left Side) */}
-                <DraggableCard
-                    title={translations.visualizer || "Visualizer"}
-                    initialPos={{ x: '20px', y: '20px' }}
-                    initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
-                    className="synth-visualizer-card"
-                    scale={scale}
-                >
-                    <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
-                    </div>
-                </DraggableCard>
+        <>
+            {/* Visualizer Card (Left Side) */}
+            <DraggableCard
+                title={translations.visualizer || "Visualizer"}
+                initialPos={{ x: '20px', y: '20px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
+                className="synth-visualizer-card"
+                scale={scale}
+            >
+                <div className="visualizer-container" style={{ width: '100%', height: '100%', background: '#000', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isSynthPlaying} />
+                </div>
+            </DraggableCard>
 
-                {/* Controls Card (Right Side) */}
-                <DraggableCard
-                    title={translations.synthesizer}
-                    initialPos={{ x: '50%', y: '20px' }}
-                    initialSize={{ width: 'calc(50% - 30px)', height: '350px' }}
-                    className="synth-controls-card"
-                    scale={scale}
-                >
-                    <SynthControls
-                        frequency={frequency}
-                        setFrequency={setFrequency}
-                        waveform={waveform}
-                        setWaveform={setWaveform}
-                        volume={volume}
-                        onVolumeChange={handleVolumeChange}
-                        isPlaying={isSynthPlaying}
-                        onStart={() => setIsSynthPlaying(true)}
-                        onStop={() => setIsSynthPlaying(false)}
-                        translations={translations}
-                    />
-                </DraggableCard>
+            {/* Controls Card (Right Side) */}
+            <DraggableCard
+                title={translations.synthesizer}
+                initialPos={{ x: '50%', y: '20px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '350px' }}
+                className="synth-controls-card"
+                scale={scale}
+            >
+                <SynthControls
+                    frequency={frequency}
+                    setFrequency={setFrequency}
+                    waveform={waveform}
+                    setWaveform={setWaveform}
+                    volume={volume}
+                    onVolumeChange={handleVolumeChange}
+                    isPlaying={isSynthPlaying}
+                    onStart={() => setIsSynthPlaying(true)}
+                    onStop={() => setIsSynthPlaying(false)}
+                    translations={translations}
+                />
+            </DraggableCard>
 
-                {/* Animation Card 1 (Bottom Left - Ground) */}
-                <DraggableCard
-                    initialPos={{ x: '20px', y: '440px' }}
-                    initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
-                    className="synth-anim-card-1"
-                    scale={scale}
-                >
-                    <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
-                </DraggableCard>
+            {/* Animation Card 1 (Bottom Left - Ground) */}
+            <DraggableCard
+                initialPos={{ x: '20px', y: '440px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
+                className="synth-anim-card-1"
+                scale={scale}
+            >
+                <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
+            </DraggableCard>
 
-                {/* Animation Card 2 (Bottom Right - Bridge) */}
-                <DraggableCard
-                    initialPos={{ x: '50%', y: '390px' }}
-                    initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
-                    className="synth-anim-card-2"
-                    scale={scale}
-                >
-                    <SynthAnimation isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthAnimation logic */}
-                </DraggableCard>
-            </>
-            );
+            {/* Animation Card 2 (Bottom Right - Bridge) */}
+            <DraggableCard
+                initialPos={{ x: '50%', y: '390px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '200px' }}
+                className="synth-anim-card-2"
+                scale={scale}
+            >
+                <SynthAnimation isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthAnimation logic */}
+            </DraggableCard>
+        </>
+    );
 
     const renderStaveMode = () => (
-            <>
-                {/* Card 1: Stave Input (Top Left) */}
-                <DraggableCard
-                    title={translations.staveInput}
-                    initialPos={{ x: '16px', y: '16px' }}
-                    initialSize={{ width: '480px', height: '460px' }}
-                    className="stave-editor-card"
-                    scale={scale}
-                >
-                    <StaveInput
-                        melody={melody}
-                        setMelody={setMelody}
-                        onPlay={playMelody}
-                        isPlaying={isStavePlaying}
-                        translations={translations}
-                    />
-                </DraggableCard>
+        <>
+            {/* Card 1: Stave Input (Top Left) */}
+            <DraggableCard
+                title={translations.staveInput}
+                initialPos={{ x: '16px', y: '16px' }}
+                initialSize={{ width: '480px', height: '460px' }}
+                className="stave-editor-card"
+                scale={scale}
+            >
+                <StaveInput
+                    melody={melody}
+                    setMelody={setMelody}
+                    onPlay={playMelody}
+                    isPlaying={isStavePlaying}
+                    translations={translations}
+                />
+            </DraggableCard>
 
-                {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
-                <DraggableCard
-                    initialPos={{ x: '16px', y: '492px' }}
-                    initialSize={{ width: '1030px', height: '110px' }}
-                    className="stave-animation-card"
-                    hideHeader={true}
-                    scale={scale}
-                >
-                    <div style={{
-                        width: '100%',
-                        height: '100%',
-                        background: '#18181b', // Dark background
-                        border: '1px solid var(--border-color)',
-                        borderRadius: '8px',
-                        position: 'relative',
-                        overflow: 'hidden'
-                    }}>
-                        <StaveVisualizer melody={melody} isPlaying={isStavePlaying} currentNoteIndex={currentNoteIndex} />
-                    </div>
-                </DraggableCard>
+            {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
+            <DraggableCard
+                initialPos={{ x: '16px', y: '492px' }}
+                initialSize={{ width: '1030px', height: '110px' }}
+                className="stave-animation-card"
+                hideHeader={true}
+                scale={scale}
+            >
+                <div style={{
+                    width: '100%',
+                    height: '100%',
+                    background: '#18181b', // Dark background
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <StaveVisualizer melody={melody} isPlaying={isStavePlaying} currentNoteIndex={currentNoteIndex} />
+                </div>
+            </DraggableCard>
 
-                {/* Card 3: Visualizer & Controls (Center, between left and right) */}
-                <DraggableCard
-                    title={translations.controls || "Controls"}
-                    initialPos={{ x: '516px', y: '16px' }}
-                    initialSize={{ width: '532px', height: '460px' }}
-                    className="stave-visualizer-controls-card"
-                    scale={scale}
-                >
-                    <div className="visualizer-container" style={{ width: '100%', height: '60%', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
-                    </div>
-                    <StaveControls
-                        onPlay={playMelody}
-                        isPlaying={isStavePlaying}
-                        onClear={() => setMelody([])}
-                        melody={melody}
-                        translations={translations}
-                        volume={volume}
-                        onVolumeChange={setVolume}
-                    />
-                </DraggableCard>
+            {/* Card 3: Visualizer & Controls (Center, between left and right) */}
+            <DraggableCard
+                title={translations.controls || "Controls"}
+                initialPos={{ x: '516px', y: '16px' }}
+                initialSize={{ width: '532px', height: '460px' }}
+                className="stave-visualizer-controls-card"
+                scale={scale}
+            >
+                <div className="visualizer-container" style={{ width: '100%', height: '60%', background: '#000', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Visualizer analyser={analyserNode} isPlaying={isStavePlaying} />
+                </div>
+                <StaveControls
+                    onPlay={playMelody}
+                    isPlaying={isStavePlaying}
+                    onClear={() => setMelody([])}
+                    melody={melody}
+                    translations={translations}
+                    volume={volume}
+                    onVolumeChange={setVolume}
+                />
+            </DraggableCard>
 
-                {/* Card 4: Melody Table (Right) */}
-                <DraggableCard
-                    title={translations.melody || "Melody"}
-                    initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
-                    initialSize={{ width: '450px', height: 'calc(100% - 26px)' }}
-                    className="stave-table-card"
-                    scale={scale}
-                >
-                    <MelodyTable
-                        melody={melody}
-                        onDelete={(id) => setMelody(melody.filter(n => n.id !== id))}
-                        onReorder={setMelody}
-                        translations={translations}
-                        currentNoteIndex={currentNoteIndex}
-                    />
-                </DraggableCard>
-            </>
-            );
+            {/* Card 4: Melody Table (Right) */}
+            <DraggableCard
+                title={translations.melody || "Melody"}
+                initialPos={{ x: 'calc(100% - 470px)', y: '16px' }}
+                initialSize={{ width: '450px', height: 'calc(100% - 26px)' }}
+                className="stave-table-card"
+                scale={scale}
+            >
+                <MelodyTable
+                    melody={melody}
+                    onDelete={(id) => setMelody(melody.filter(n => n.id !== id))}
+                    onReorder={setMelody}
+                    translations={translations}
+                    currentNoteIndex={currentNoteIndex}
+                />
+            </DraggableCard>
+        </>
+    );
 
-            return (
-            <div className="audio-player-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
-                {mode === 'player' && renderPlayerMode()}
-                {mode === 'synth' && renderSynthMode()}
-                {mode === 'stave' && renderStaveMode()}
-            </div>
-            );
+    return (
+        <div className="audio-player-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
+            {mode === 'player' && renderPlayerMode()}
+            {mode === 'synth' && renderSynthMode()}
+            {mode === 'stave' && renderStaveMode()}
+        </div>
+    );
 };
 
-            export default AudioPlayer;
+export default AudioPlayer;
