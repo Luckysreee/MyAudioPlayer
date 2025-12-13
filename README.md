@@ -60,7 +60,18 @@ The interface supports four languages with instant switching:
 
 ## Screenshots
 
-*(Placeholder for Screenshots)*
+<img width="1904" height="901" alt="image" src="https://github.com/user-attachments/assets/0042d525-2fd8-48f1-9b39-67fcd407c92e" />
+
+<img width="1900" height="887" alt="image" src="https://github.com/user-attachments/assets/ddd25a6e-211b-4180-a25e-04628147f7a5" />
+
+<img width="1917" height="923" alt="image" src="https://github.com/user-attachments/assets/c6fc3660-6f7f-4061-a8d1-8c2deec2cccf" />
+
+<img width="1894" height="893" alt="image" src="https://github.com/user-attachments/assets/f4e82606-7cee-4ae5-8131-2ac4435a291d" />
+
+<img width="1906" height="887" alt="image" src="https://github.com/user-attachments/assets/8eb4d65a-12e3-4d64-a3d1-d1b543d17196" />
+
+<img width="1898" height="907" alt="image" src="https://github.com/user-attachments/assets/7cb96b9c-606b-4f34-8dde-a9ec5e3ce1b4" />
+
 
 > **Note**: This application is a visual experience. We recommend running it locally to see the real-time visualizations and animations.
 
