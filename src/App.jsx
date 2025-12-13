@@ -19,9 +19,7 @@ function App() {
     const [language, setLanguage] = useState('en');
     const [isHighContrast, setIsHighContrast] = useState(false);
     const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
-    const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
     const [mode, setMode] = useState('home');
-    const [zoomLevel, setZoomLevel] = useState(100);
     const [zoomLevel, setZoomLevel] = useState(100);
     const [resetKey, setResetKey] = useState(0);
 

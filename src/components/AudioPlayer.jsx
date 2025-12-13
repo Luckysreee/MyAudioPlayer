@@ -252,8 +252,15 @@ const AudioPlayer = ({
             }
             audioRef.current.src = URL.createObjectURL(currentFile);
             // Resume if already playing (Track Change), but don't auto-play on initial load
+            // Resume if already playing (Track Change), but don't auto-play on initial load
             if (isPlaying) {
-                audioRef.current.play().catch(e => console.error("Auto-resume failed", e));
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        // Auto-play was prevented or interrupted (e.g. by new load or pause)
+                        if (e.name !== 'AbortError') console.error("Playback error:", e);
+                    });
+                }
             }
         } else if (audioRef.current) {
             audioRef.current.pause();
