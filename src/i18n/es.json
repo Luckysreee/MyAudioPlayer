@@ -53,5 +53,6 @@
     "duration": "Duración",
     "actions": "Acciones",
     "emptyMelody": "No hay notas añadidas",
-    "piano": "Piano"
+    "piano": "Piano",
+    "loop": "Bucle"
 }
