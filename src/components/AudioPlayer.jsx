@@ -6,7 +6,7 @@ import Playlist from './Playlist';
 import SynthControls from './SynthControls';
 import StaveInput, { StaveControls, MelodyTable } from './StaveInput';
 import StaveVisualizer from './StaveVisualizer';
-import SynthGear from './SynthGear';
+import SynthAnimation from './SynthAnimation';
 
 const AudioPlayer = ({
     mode,
@@ -441,7 +441,7 @@ const AudioPlayer = ({
                 initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
                 className="synth-anim-card-1"
             >
-                <SynthGear isPlaying={isSynthPlaying} mode="ground" delay={0} />
+                <SynthAnimation isPlaying={isSynthPlaying} mode="ground" delay={0} />
             </DraggableCard>
 
             {/* Animation Card 2 (Bottom Right - Bridge) */}
@@ -450,7 +450,7 @@ const AudioPlayer = ({
                 initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
                 className="synth-anim-card-2"
             >
-                <SynthGear isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthGear logic */}
+                <SynthAnimation isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthAnimation logic */}
             </DraggableCard>
         </>
     );
@@ -476,7 +476,7 @@ const AudioPlayer = ({
             {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
             <DraggableCard
                 initialPos={{ x: '16px', y: '492px' }}
-                initialSize={{ width: '1030px', height: '90px' }}
+                initialSize={{ width: '1030px', height: '100px' }}
                 className="stave-animation-card"
             >
                 <div style={{

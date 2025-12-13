@@ -20,8 +20,12 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
         const height = rect.height;
 
         // Drawing Config
-        const staffGap = 20;
-        const staffWidth = width * 0.8;
+        // Drawing Config
+        // Auto-scale staffGap. 
+        // We need 5 lines (4 gaps) + generous top/bottom margin.
+        // Let's say we need ~8 gaps vertical space total.
+        const staffGap = Math.min(20, height / 10);
+        const staffWidth = width * 0.9;
         const startX = (width - staffWidth) / 2;
         const middleY = height / 2;
         const staffTop = middleY - (staffGap * 2);
