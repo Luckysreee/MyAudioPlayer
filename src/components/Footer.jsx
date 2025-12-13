@@ -17,7 +17,7 @@ const Footer = ({ currentPageName }) => {
         }}>
             {/* Left: Metadata/Copyright */}
             <div>
-                © 2025 All Rights Reserved
+                © 2025 Audio Studio
             </div>
 
             {/* Right: Page Name */}

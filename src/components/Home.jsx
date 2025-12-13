@@ -20,10 +20,8 @@ const Home = ({ onNavigate }) => {
                     fontSize: '4rem',
                     fontWeight: '800',
                     margin: '0 0 1rem 0',
-                    background: 'linear-gradient(to right, var(--primary-color), var(--secondary-color))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    textShadow: '0 0 30px rgba(167, 139, 250, 0.3)'
+                    color: 'var(--primary-color)',
+                    textShadow: '0 0 40px rgba(187, 134, 252, 0.15)'
                 }}>
                     Audio Studio
                 </h1>
@@ -72,22 +70,23 @@ const Home = ({ onNavigate }) => {
                         padding: '1rem 3rem',
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
-                        color: '#000', // Always dark text on gradient? Or white? Gradient is purple/pink. White text best.
-                        color: '#fff',
-                        background: 'linear-gradient(45deg, var(--primary-color), var(--error-color))', // Fun gradient using vars
+                        color: 'var(--bg-color)',
+                        background: 'var(--primary-color)',
                         border: 'none',
                         borderRadius: '50px',
                         cursor: 'pointer',
-                        boxShadow: '0 10px 25px rgba(124, 58, 237, 0.5)',
-                        transition: 'transform 0.2s, box-shadow 0.2s'
+                        boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
+                        transition: 'transform 0.2s, box-shadow 0.2s, filter 0.2s'
                     }}
                     onMouseOver={(e) => {
                         e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 15px 35px rgba(124, 58, 237, 0.6)';
+                        e.target.style.boxShadow = '0 12px 25px rgba(0,0,0,0.4)';
+                        e.target.style.filter = 'brightness(1.1)';
                     }}
                     onMouseOut={(e) => {
                         e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = '0 10px 25px rgba(124, 58, 237, 0.5)';
+                        e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+                        e.target.style.filter = 'brightness(1)';
                     }}
                 >
                     Start Creating
