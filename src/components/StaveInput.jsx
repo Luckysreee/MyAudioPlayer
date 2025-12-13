@@ -20,11 +20,11 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
                 boxSizing: 'border-box'
             }}
         >
-            {isPlaying ? "⏹ Stop" : "▶ Play Melody"}
+            {isPlaying ? `⏹ ${translations.stop || "Stop"}` : `▶ ${translations.playMelody || "Play Melody"}`}
         </button>
 
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxSizing: 'border-box' }}>
-            <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Volume: {Math.round(volume * 100)}%</label>
+            <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>{translations.volume || "Volume"}: {Math.round(volume * 100)}%</label>
             <input
                 type="range"
                 min="0"
@@ -67,15 +67,15 @@ export const MelodyTable = ({ melody, onDelete, onReorder, translations, current
 
     return (
         <div className="melody-table" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
+            {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.emptyMelody || "No notes added"}</p> : (
                 <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--glass-border)', borderRadius: '8px' }} className="no-drag">
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead style={{ background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 1 }}>
                             <tr>
-                                <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
-                                <th style={{ padding: '8px', textAlign: 'left' }}>Octave</th>
-                                <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
-                                <th style={{ padding: '8px', textAlign: 'center' }}>Actions</th>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>{translations.note || "Note"}</th>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>{translations.octave || "Octave"}</th>
+                                <th style={{ padding: '8px', textAlign: 'left' }}>{translations.duration || "Duration"}</th>
+                                <th style={{ padding: '8px', textAlign: 'center' }}>{translations.actions || "Actions"}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,7 +245,7 @@ const StaveInput = ({ melody, setMelody, translations }) => {
             <div className="flex-center gap-md mb-4" style={{ background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '8px', width: 'fit-content', margin: '0 auto 1rem auto' }}>
                 <label style={{ cursor: 'pointer', opacity: inputMode === 'piano' ? 1 : 0.5 }}>
                     <input type="radio" name="inputMode" checked={inputMode === 'piano'} onChange={() => setInputMode('piano')} style={{ marginRight: '5px' }} />
-                    Piano
+                    {translations.piano || "Piano"}
                 </label>
                 <label style={{ cursor: 'pointer', opacity: inputMode === 'builder' ? 1 : 0.5 }}>
                     <input type="radio" name="inputMode" checked={inputMode === 'builder'} onChange={() => setInputMode('builder')} style={{ marginRight: '5px' }} />
@@ -264,7 +264,7 @@ const StaveInput = ({ melody, setMelody, translations }) => {
                         {/* Piano Settings Controls */}
                         <div className="flex-center gap-md" style={{ background: 'rgba(0,0,0,0.2)', padding: '0.75rem', borderRadius: '8px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Octave:</label>
+                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>{translations.octave || "Octave"}:</label>
                                 <select
                                     value={octave}
                                     onChange={e => setOctave(e.target.value)}
@@ -275,7 +275,7 @@ const StaveInput = ({ melody, setMelody, translations }) => {
                                 </select>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Duration:</label>
+                                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>{translations.duration || "Duration"}:</label>
                                 <select
                                     value={duration}
                                     onChange={e => setDuration(e.target.value)}
@@ -293,7 +293,6 @@ const StaveInput = ({ melody, setMelody, translations }) => {
                         <Piano onKeyClick={handlePianoClick} octave={parseInt(octave)} />
                     </div>
                 )}
-
                 {inputMode === 'text' && (
                     <div className="text-mode">
                         <textarea

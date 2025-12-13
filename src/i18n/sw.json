@@ -41,5 +41,17 @@
     "goToHome": "Nenda Nyumbani",
     "resetLayout": "Weka upya Mpangilio",
     "switchMode": "Badilisha Hali",
-    "copyright": "© 2025 Audio Studio"
+    "copyright": "© 2025 Audio Studio",
+    "upload": "Pakia Sauti",
+    "uploadDesc": "Buruta na uweke faili au bonyeza ili kuvinjari",
+    "visualizer": "Visualizer",
+    "controls": "Vidhibiti",
+    "playMelody": "Cheza Melodi",
+    "stop": "Acha",
+    "note": "Kumbuka",
+    "octave": "Oktava",
+    "duration": "Muda",
+    "actions": "Vitendo",
+    "emptyMelody": "Hakuna noti zilizoongezwa",
+    "piano": "Piano"
 }

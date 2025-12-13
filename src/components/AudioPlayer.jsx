@@ -403,7 +403,7 @@ const AudioPlayer = ({
                         {translations.upload || "Upload Audio"}
                     </h3>
                     <p style={{ margin: '0.5rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                        Drag & drop files or click to browse
+                        {translations.uploadDesc || "Drag & drop files or click to browse"}
                     </p>
                 </div>
             </DraggableCard>

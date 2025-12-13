@@ -41,5 +41,17 @@
     "goToHome": "Aller à l'Accueil",
     "resetLayout": "Réinitialiser la Disposition",
     "switchMode": "Changer de Mode",
-    "copyright": "© 2025 Audio Studio"
+    "copyright": "© 2025 Audio Studio",
+    "upload": "Télécharger Audio",
+    "uploadDesc": "Glissez-déposez des fichiers ou cliquez pour parcourir",
+    "visualizer": "Visualiseur",
+    "controls": "Contrôles",
+    "playMelody": "Jouer Mélodie",
+    "stop": "Arrêter",
+    "note": "Note",
+    "octave": "Octave",
+    "duration": "Durée",
+    "actions": "Actions",
+    "emptyMelody": "Aucune note ajoutée",
+    "piano": "Piano"
 }
