@@ -9,9 +9,10 @@ const Home = ({ onNavigate }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#fff',
+            color: 'var(--text-color)',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: 'var(--bg-color)'
         }}>
             {/* Background Gradient Animation */}
             <div style={{
@@ -20,7 +21,7 @@ const Home = ({ onNavigate }) => {
                 left: '-50%',
                 width: '200%',
                 height: '200%',
-                background: 'radial-gradient(circle at center, #2e1065 0%, #000 70%)',
+                background: 'var(--home-bg-gradient)',
                 animation: 'pulseBg 10s infinite alternate',
                 zIndex: 0
             }}></div>
@@ -31,7 +32,7 @@ const Home = ({ onNavigate }) => {
                     fontSize: '4rem',
                     fontWeight: '800',
                     margin: '0 0 1rem 0',
-                    background: 'linear-gradient(to right, #a78bfa, #2dd4bf)',
+                    background: 'linear-gradient(to right, var(--primary-color), var(--secondary-color))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     textShadow: '0 0 30px rgba(167, 139, 250, 0.3)'
@@ -40,7 +41,7 @@ const Home = ({ onNavigate }) => {
                 </h1>
                 <p style={{
                     fontSize: '1.5rem',
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     maxWidth: '600px',
                     margin: '0 auto 3rem auto',
                     lineHeight: '1.6'
@@ -83,8 +84,9 @@ const Home = ({ onNavigate }) => {
                         padding: '1rem 3rem',
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
+                        color: '#000', // Always dark text on gradient? Or white? Gradient is purple/pink. White text best.
                         color: '#fff',
-                        background: 'linear-gradient(45deg, #7c3aed, #db2777)',
+                        background: 'linear-gradient(45deg, var(--primary-color), var(--error-color))', // Fun gradient using vars
                         border: 'none',
                         borderRadius: '50px',
                         cursor: 'pointer',
@@ -118,9 +120,9 @@ const FeatureCard = ({ title, desc, icon, onClick }) => (
     <div
         onClick={onClick}
         style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'var(--card-bg-glass)',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            border: '1px solid var(--card-border-glass)',
             padding: '2rem',
             borderRadius: '16px',
             width: '250px',
@@ -129,17 +131,17 @@ const FeatureCard = ({ title, desc, icon, onClick }) => (
             textAlign: 'left'
         }}
         onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+            e.currentTarget.style.background = 'var(--card-border-glass)';
             e.currentTarget.style.transform = 'translateY(-5px)';
         }}
         onMouseOut={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+            e.currentTarget.style.background = 'var(--card-bg-glass)';
             e.currentTarget.style.transform = 'translateY(0)';
         }}
     >
         <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{icon}</div>
-        <h3 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>{title}</h3>
-        <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>{desc}</p>
+        <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-color)' }}>{title}</h3>
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>{desc}</p>
     </div>
 );
 
