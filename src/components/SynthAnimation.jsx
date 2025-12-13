@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SynthAnimation = ({ isPlaying, mode = 'ground', animationDuration = 8 }) => {
+const SynthAnimation = ({ isPlaying, mode = 'ground', animationDuration = 12 }) => {
 
     return (
         <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>

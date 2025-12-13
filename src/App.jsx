@@ -172,12 +172,18 @@ function App() {
                 </div>
             </header>
 
-            <main className="app-content">
-                {/* Apply Zoom Here via Transform or Font Size */}
+            <main className="app-content" style={{ overflow: 'auto', position: 'relative', width: '100%', height: '100%' }}>
+                {/* Apply Zoom via Transform */}
                 <div style={{
+                    width: `${100 * (100 / zoomLevel)}%`, // Compensate width to keep filling screen relative to scale?
+                    // Actually, if we want "Zoom In", we want elements to get bigger.
+                    // If we scale(1.5), elements are 1.5x bigger. They might overflow.
+                    // Width should be '100%' of the *unscaled* space?
+                    // Let's just set width: '100%' and let it overflow.
                     width: '100%',
                     height: '100%',
-                    fontSize: `${zoomLevel}%`
+                    transform: `scale(${zoomLevel / 100})`,
+                    transformOrigin: 'top left'
                 }}>
                     <AudioPlayer
                         key={resetKey}

@@ -319,18 +319,28 @@ const AudioPlayer = ({
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
 
                         {/* Volume (Left Side) */}
-                        <div className="volume-control flex-center gap-sm" style={{ justifySelf: 'start' }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" /></svg>
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={volume}
-                                onChange={handleVolumeChange}
-                                className="no-drag custom-slider"
-                                style={{ width: '80px' }}
-                            />
+                        <div className="volume-control flex-center gap-sm" style={{ justifySelf: 'start', minWidth: '140px' }}>
+                            <button className="btn-icon-small" onClick={() => handleVolumeChange({ target: { value: volume > 0 ? 0 : 0.5 } })} title="Mute/Unmute">
+                                {volume === 0 ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0a7 7 0 0 0-2-4.9"></path></svg>
+                                ) : (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" /></svg>
+                                )}
+                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '80px', gap: '2px' }}>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={volume}
+                                    onChange={handleVolumeChange}
+                                    className="no-drag custom-slider"
+                                    style={{ width: '100%', height: '4px' }}
+                                    title={`Volume: ${Math.round(volume * 100)}%`}
+                                />
+                            </div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', minWidth: '35px' }}>{Math.round(volume * 100)}%</span>
                         </div>
 
                         {/* Playback Buttons (Center) */}
