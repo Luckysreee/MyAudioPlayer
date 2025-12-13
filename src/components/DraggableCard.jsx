@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const DraggableCard = ({ children, title, initialPos, initialSize, className = '' }) => {
+const DraggableCard = ({ children, title, initialPos, initialSize, className = '', hideHeader = false }) => {
     const [pos, setPos] = useState(initialPos || { x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [rel, setRel] = useState(null); // Relative position of cursor
@@ -77,7 +77,7 @@ const DraggableCard = ({ children, title, initialPos, initialSize, className = '
             onMouseLeave={onMouseUp}
         >
             {title && <div className="card-header">{title}</div>}
-            <div className="card-handle-grip" style={{ position: 'absolute', top: '10px', right: '10px', opacity: 0.5, cursor: 'grab' }}>⋮⋮</div>
+            {!hideHeader && <div className="card-handle-grip" style={{ position: 'absolute', top: '10px', right: '10px', opacity: 0.5, cursor: 'grab' }}>⋮⋮</div>}
             <div className="card-content">
                 {children}
             </div>

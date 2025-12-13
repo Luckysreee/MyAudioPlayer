@@ -476,13 +476,15 @@ const AudioPlayer = ({
             {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
             <DraggableCard
                 initialPos={{ x: '16px', y: '492px' }}
-                initialSize={{ width: '1030px', height: '100px' }}
+                initialSize={{ width: '1030px', height: '110px' }}
                 className="stave-animation-card"
+                hideHeader={true}
             >
                 <div style={{
                     width: '100%',
                     height: '100%',
-                    background: '#fff',
+                    background: '#18181b', // Dark background
+                    border: '1px solid var(--border-color)',
                     borderRadius: '8px',
                     position: 'relative',
                     overflow: 'hidden'

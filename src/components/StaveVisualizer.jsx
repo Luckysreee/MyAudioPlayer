@@ -34,8 +34,8 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
         ctx.clearRect(0, 0, width, height);
 
         // Draw Staff Lines
-        ctx.strokeStyle = '#666'; // Muted color for lines
-        ctx.lineWidth = 2; // Slightly thicker
+        ctx.strokeStyle = '#aaa'; // Light color for dark background
+        ctx.lineWidth = 1.5; // Slightly thinner
         ctx.beginPath();
         for (let i = 0; i < 5; i++) {
             const y = staffTop + (i * staffGap);
@@ -110,7 +110,8 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
 
             ctx.fillStyle = primaryColor;
             ctx.beginPath();
-            ctx.ellipse(startX + staffWidth / 2, noteY, staffGap * 0.6, staffGap * 0.4, 0, 0, 2 * Math.PI);
+            // Reduce size slightly (original multiplied by 0.9)
+            ctx.ellipse(startX + staffWidth / 2, noteY, (staffGap * 0.6) * 0.9, (staffGap * 0.4) * 0.9, 0, 0, 2 * Math.PI);
             ctx.fill();
 
             // Draw Stem
@@ -121,12 +122,12 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
             // Middle Line is B4 (diatonic index 6).
             if (diatonicIndex < 6) {
                 // Up
-                ctx.moveTo(startX + staffWidth / 2 + (staffGap * 0.6), noteY);
-                ctx.lineTo(startX + staffWidth / 2 + (staffGap * 0.6), noteY - (staffGap * 3.5));
+                ctx.moveTo(startX + staffWidth / 2 + ((staffGap * 0.6) * 0.9), noteY);
+                ctx.lineTo(startX + staffWidth / 2 + ((staffGap * 0.6) * 0.9), noteY - (staffGap * 3.5));
             } else {
                 // Down
-                ctx.moveTo(startX + staffWidth / 2 - (staffGap * 0.6), noteY);
-                ctx.lineTo(startX + staffWidth / 2 - (staffGap * 0.6), noteY + (staffGap * 3.5));
+                ctx.moveTo(startX + staffWidth / 2 - ((staffGap * 0.6) * 0.9), noteY);
+                ctx.lineTo(startX + staffWidth / 2 - ((staffGap * 0.6) * 0.9), noteY + (staffGap * 3.5));
             }
             ctx.stroke();
 
@@ -134,7 +135,7 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
             // Simple logic for C4 (Middle C)
             if (currentNote.note === 'C' && currentNote.octave === 4) {
                 ctx.beginPath();
-                ctx.strokeStyle = '#666';
+                ctx.strokeStyle = '#aaa';
                 ctx.moveTo(startX + staffWidth / 2 - staffGap, noteY);
                 ctx.lineTo(startX + staffWidth / 2 + staffGap, noteY);
                 ctx.stroke();
@@ -142,7 +143,7 @@ const StaveVisualizer = ({ melody, currentNoteIndex, isPlaying }) => {
             if (currentNote.note === 'A' && currentNote.octave === 5) {
                 // A5 is just above the staff
                 ctx.beginPath();
-                ctx.strokeStyle = '#666';
+                ctx.strokeStyle = '#aaa';
                 ctx.moveTo(startX + staffWidth / 2 - staffGap, noteY);
                 ctx.lineTo(startX + staffWidth / 2 + staffGap, noteY);
                 ctx.stroke();
