@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Footer = ({ currentPageName }) => {
+const Footer = ({ currentPageName, translations }) => {
+    const t = translations || {};
     return (
         <footer style={{
             flex: '0 0 auto',
@@ -17,7 +18,7 @@ const Footer = ({ currentPageName }) => {
         }}>
             {/* Left: Metadata/Copyright */}
             <div>
-                © 2025 Audio Studio
+                {t.copyright || "© 2025 Audio Studio"}
             </div>
 
             {/* Right: Page Name */}

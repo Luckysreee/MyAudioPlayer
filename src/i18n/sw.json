@@ -32,5 +32,14 @@
     "pinkNoise": "Kelele ya Pink",
     "reset": "Weka upya",
     "invalidNote": "Muundo wa noti sio sahihi",
-    "melody": "Melodi"
+    "melody": "Melodi",
+    "subtitle": "Uwanja wa kitaalamu kwa sauti yako. Angalia, Tengeneza, na Tunga katika uzoefu mmoja usio na hitilafu.",
+    "playerDesc": "Uchezaji wa hali ya juu na taswira ya masafa ya muda halisi.",
+    "synthDesc": "Zalisha mawimbi na kelele na oscillators desturi.",
+    "staveDesc": "Tunga nyimbo kwa kutumia nukuu za muziki za kawaida.",
+    "startCreating": "Anza Kuunda",
+    "goToHome": "Nenda Nyumbani",
+    "resetLayout": "Weka upya Mpangilio",
+    "switchMode": "Badilisha Hali",
+    "copyright": "© 2025 Audio Studio"
 }

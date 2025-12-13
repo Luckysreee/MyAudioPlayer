@@ -32,5 +32,14 @@
     "pinkNoise": "Ruido Rosa",
     "reset": "Reiniciar",
     "invalidNote": "Formato de nota inválido",
-    "melody": "Melodía"
+    "melody": "Melodía",
+    "subtitle": "El patio de recreo profesional para tu sonido. Visualiza, Sintetiza y Compón en una experiencia perfecta.",
+    "playerDesc": "Reproducción avanzada con visualización de frecuencia en tiempo real.",
+    "synthDesc": "Genera formas de onda y ruido con osciladores personalizados.",
+    "staveDesc": "Compón melodías usando notación musical estándar.",
+    "startCreating": "Empieza a Crear",
+    "goToHome": "Ir al Inicio",
+    "resetLayout": "Reiniciar Diseño",
+    "switchMode": "Cambiar Modo",
+    "copyright": "© 2025 Audio Studio"
 }

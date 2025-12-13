@@ -32,5 +32,14 @@
     "pinkNoise": "Bruit Rose",
     "reset": "Réinitialiser",
     "invalidNote": "Format de note invalide",
-    "melody": "Mélodie"
+    "melody": "Mélodie",
+    "subtitle": "Le terrain de jeu professionnel pour votre son. Visualisez, Synthétisez et Composez dans une expérience fluide.",
+    "playerDesc": "Lecture avancée avec visualisation de fréquence en temps réel.",
+    "synthDesc": "Générez des formes d'onde et du bruit avec des oscillateurs personnalisés.",
+    "staveDesc": "Composez des mélodies en utilisant la notation musicale standard.",
+    "startCreating": "Commencer à Créer",
+    "goToHome": "Aller à l'Accueil",
+    "resetLayout": "Réinitialiser la Disposition",
+    "switchMode": "Changer de Mode",
+    "copyright": "© 2025 Audio Studio"
 }

@@ -32,5 +32,14 @@
     "pinkNoise": "Pink Noise",
     "reset": "Reset",
     "invalidNote": "Invalid note format",
-    "melody": "Melody"
+    "melody": "Melody",
+    "subtitle": "The professional playground for your sound. Visualize, Synthesize, and Compose in one seamless experience.",
+    "playerDesc": "Advanced playback with real-time frequency visualization.",
+    "synthDesc": "Generate waveforms and noise with custom oscillators.",
+    "staveDesc": "Compose melodies using standard musical notation.",
+    "startCreating": "Start Creating",
+    "goToHome": "Go to Home",
+    "resetLayout": "Reset Layout",
+    "switchMode": "Switch Mode",
+    "copyright": "© 2025 Audio Studio"
 }

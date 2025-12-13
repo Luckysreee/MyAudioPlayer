@@ -113,7 +113,7 @@ function App() {
                     <h1
                         style={{ margin: 0, fontSize: '1.2rem', cursor: 'pointer' }}
                         onClick={() => setMode('home')}
-                        title="Go to Home"
+                        title={t.goToHome}
                     >
                         {t.title}
                     </h1>
@@ -147,7 +147,7 @@ function App() {
                             // Changing the key prop triggers a full unmount/mount cycle.
                             setResetKey(k => k + 1);
                         }}
-                        title="Reset Layout"
+                        title={t.resetLayout}
                         style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                     >
                         ↺
@@ -155,7 +155,7 @@ function App() {
                     <button
                         className="btn-secondary"
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                        title={t.theme}
                         style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                     >
                         {theme === 'dark' ? '☀' : '☾'}
@@ -191,7 +191,7 @@ function App() {
                     // If applied here, it shrinks. Use CSS on parent.
                 }}>
                     {mode === 'home' ? (
-                        <Home onNavigate={setMode} />
+                        <Home onNavigate={setMode} translations={t} />
                     ) : (
                         <AudioPlayer
                             key={resetKey}
@@ -217,7 +217,15 @@ function App() {
                 </div>
             </main>
 
-            <Footer currentPageName={mode.charAt(0).toUpperCase() + mode.slice(1)} />
+            <Footer
+                currentPageName={
+                    mode === 'player' ? t.player :
+                        mode === 'synth' ? t.synthesizer :
+                            mode === 'stave' ? t.staveInput :
+                                t.title
+                }
+                translations={t}
+            />
         </div>
     );
 }

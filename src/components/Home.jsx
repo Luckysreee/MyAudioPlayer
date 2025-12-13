@@ -1,6 +1,9 @@
 import React from 'react';
 
-const Home = ({ onNavigate }) => {
+const Home = ({ onNavigate, translations }) => {
+    // Safety check just in case
+    const t = translations || {};
+
     return (
         <div className="home-container" style={{
             width: '100%',
@@ -23,7 +26,7 @@ const Home = ({ onNavigate }) => {
                     color: 'var(--primary-color)',
                     textShadow: '0 0 40px rgba(187, 134, 252, 0.15)'
                 }}>
-                    Audio Studio
+                    {t.title || "Audio Studio"}
                 </h1>
                 <p style={{
                     fontSize: '1.5rem',
@@ -32,7 +35,7 @@ const Home = ({ onNavigate }) => {
                     margin: '0 auto 3rem auto',
                     lineHeight: '1.6'
                 }}>
-                    The professional playground for your sound. Visualize, Synthesize, and Compose in one seamless experience.
+                    {t.subtitle}
                 </p>
 
                 {/* Feature Grid */}
@@ -44,20 +47,20 @@ const Home = ({ onNavigate }) => {
                     marginBottom: '4rem'
                 }}>
                     <FeatureCard
-                        title="Player"
-                        desc="Advanced playback with real-time frequency visualization."
+                        title={t.player}
+                        desc={t.playerDesc}
                         icon="🎵"
                         onClick={() => onNavigate('player')}
                     />
                     <FeatureCard
-                        title="Synthesizer"
-                        desc="Generate waveforms and noise with custom oscillators."
+                        title={t.synthesizer}
+                        desc={t.synthDesc}
                         icon="🎹"
                         onClick={() => onNavigate('synth')}
                     />
                     <FeatureCard
-                        title="Stave Input"
-                        desc="Compose melodies using standard musical notation."
+                        title={t.staveInput}
+                        desc={t.staveDesc}
                         icon="🎼"
                         onClick={() => onNavigate('stave')}
                     />
@@ -89,7 +92,7 @@ const Home = ({ onNavigate }) => {
                         e.target.style.filter = 'brightness(1)';
                     }}
                 >
-                    Start Creating
+                    {t.startCreating}
                 </button>
             </div>
 
