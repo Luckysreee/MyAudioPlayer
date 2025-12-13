@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AudioPlayer from './components/AudioPlayer';
+import Home from './components/Home';
+import Footer from './components/Footer';
 import LanguageSelector from './components/LanguageSelector';
 import AccessibilityToggle from './components/AccessibilityToggle';
 import './styles/base.css';
@@ -17,7 +19,9 @@ function App() {
     const [language, setLanguage] = useState('en');
     const [isHighContrast, setIsHighContrast] = useState(false);
     const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
-    const [mode, setMode] = useState('player');
+    const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
+    const [mode, setMode] = useState('home');
+    const [zoomLevel, setZoomLevel] = useState(100);
     const [zoomLevel, setZoomLevel] = useState(100);
     const [resetKey, setResetKey] = useState(0);
 
@@ -108,7 +112,13 @@ function App() {
         <div className="app-container">
             <header className="app-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <h1 style={{ margin: 0, fontSize: '1.2rem' }}>{t.title}</h1>
+                    <h1
+                        style={{ margin: 0, fontSize: '1.2rem', cursor: 'pointer' }}
+                        onClick={() => setMode('home')}
+                        title="Go to Home"
+                    >
+                        {t.title}
+                    </h1>
                     <nav className="tab-bar">
                         <button className={`tab-btn ${mode === 'player' ? 'active' : ''}`} onClick={() => setMode('player')}>{t.player}</button>
                         <button className={`tab-btn ${mode === 'synth' ? 'active' : ''}`} onClick={() => setMode('synth')}>{t.synthesizer}</button>
@@ -175,43 +185,39 @@ function App() {
             <main className="app-content" style={{ overflow: 'auto', position: 'relative', width: '100%', height: '100%' }}>
                 {/* Apply Zoom via Transform */}
                 <div style={{
-                    width: `${100 * (100 / zoomLevel)}%`, // Compensate width to keep filling screen relative to scale?
-                    // Actually, if we want "Zoom In", we want elements to get bigger.
-                    // If we scale(1.5), elements are 1.5x bigger. They might overflow.
-                    // Width should be '100%' of the *unscaled* space?
-                    // Let's just set width: '100%' and let it overflow.
                     width: '100%',
                     height: '100%',
                     transform: `scale(${zoomLevel / 100})`,
                     transformOrigin: 'top left'
                 }}>
-                    <AudioPlayer
-                        key={resetKey}
-                        scale={zoomLevel / 100}
-                        mode={mode}
-                        setMode={setMode}
-                        currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
-                        onEnded={nextTrack}
-                        onNext={nextTrack}
-                        onPrev={prevTrack}
-                        translations={t}
-                        files={files}
-                        currentFileIndex={currentFileIndex}
-                        playFile={playFile}
-                        handleDelete={handleDelete}
-                        handleClearAll={handleClearAll}
-                        dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
-                        onUploadClick={triggerFileUpload}
-                        onReorder={handleReorder}
-                        onReorderPlaylist={handleReorderPlaylist}
-                    />
+                    {mode === 'home' ? (
+                        <Home onNavigate={setMode} />
+                    ) : (
+                        <AudioPlayer
+                            key={resetKey}
+                            scale={zoomLevel / 100}
+                            mode={mode}
+                            setMode={setMode}
+                            currentFile={currentFileIndex !== -1 ? files[currentFileIndex] : null}
+                            onEnded={nextTrack}
+                            onNext={nextTrack}
+                            onPrev={prevTrack}
+                            translations={t}
+                            files={files}
+                            currentFileIndex={currentFileIndex}
+                            playFile={playFile}
+                            handleDelete={handleDelete}
+                            handleClearAll={handleClearAll}
+                            dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
+                            onUploadClick={triggerFileUpload}
+                            onReorder={handleReorder}
+                            onReorderPlaylist={handleReorderPlaylist}
+                        />
+                    )}
                 </div>
             </main>
 
-            <footer className="app-footer">
-                <div>© 2025 Audio Studio</div>
-                <div>v1.0.1</div>
-            </footer>
+            <Footer />
         </div>
     );
 }

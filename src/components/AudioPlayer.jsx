@@ -251,8 +251,10 @@ const AudioPlayer = ({
                 }
             }
             audioRef.current.src = URL.createObjectURL(currentFile);
-            // Removed auto-play: audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error(e));
-            // Just load it.
+            // Resume if already playing (Track Change), but don't auto-play on initial load
+            if (isPlaying) {
+                audioRef.current.play().catch(e => console.error("Auto-resume failed", e));
+            }
         } else if (audioRef.current) {
             audioRef.current.pause();
             setIsPlaying(false);
