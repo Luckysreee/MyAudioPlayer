@@ -6,6 +6,7 @@ import Playlist from './Playlist';
 import SynthControls from './SynthControls';
 import StaveInput, { StaveControls, MelodyTable } from './StaveInput';
 import StaveVisualizer from './StaveVisualizer';
+import SynthGear from './SynthGear';
 
 const AudioPlayer = ({
     mode,
@@ -417,7 +418,7 @@ const AudioPlayer = ({
             <DraggableCard
                 title={translations.synthesizer}
                 initialPos={{ x: '50%', y: '20px' }}
-                initialSize={{ width: 'calc(50% - 30px)', height: 'auto' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '400px' }}
                 className="synth-controls-card"
             >
                 <SynthControls
@@ -432,6 +433,24 @@ const AudioPlayer = ({
                     onStop={() => setIsSynthPlaying(false)}
                     translations={translations}
                 />
+            </DraggableCard>
+
+            {/* Animation Card 1 (Bottom Left - Ground) */}
+            <DraggableCard
+                initialPos={{ x: '20px', y: '440px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
+                className="synth-anim-card-1"
+            >
+                <SynthGear isPlaying={isSynthPlaying} mode="ground" delay={0} />
+            </DraggableCard>
+
+            {/* Animation Card 2 (Bottom Right - Bridge) */}
+            <DraggableCard
+                initialPos={{ x: '50%', y: '440px' }}
+                initialSize={{ width: 'calc(50% - 30px)', height: '150px' }}
+                className="synth-anim-card-2"
+            >
+                <SynthGear isPlaying={isSynthPlaying} mode="bridge" delay={2} /> {/* Assuming 4s duration, delay 2s for half cycle overlap if continuous? Or check SynthGear logic */}
             </DraggableCard>
         </>
     );
@@ -457,7 +476,7 @@ const AudioPlayer = ({
             {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
             <DraggableCard
                 initialPos={{ x: '16px', y: '492px' }}
-                initialSize={{ width: '1030px', height: '180px' }}
+                initialSize={{ width: '1030px', height: '90px' }}
                 className="stave-animation-card"
             >
                 <div style={{
