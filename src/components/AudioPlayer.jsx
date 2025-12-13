@@ -79,28 +79,68 @@ const AudioPlayer = ({
     // SYNTH LOGIC
     useEffect(() => {
         if (isSynthPlaying && audioContextRef.current && gainNodeRef.current) {
-            // Stop existing if any (oscillator nodes can't be reused)
+            // Stop existing if any
             if (oscillatorRef.current) {
                 try { oscillatorRef.current.stop(); } catch (e) { }
+                oscillatorRef.current = null;
             }
 
-            const osc = audioContextRef.current.createOscillator();
-            osc.type = waveform;
-            osc.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-            osc.connect(gainNodeRef.current);
-            osc.start();
-            oscillatorRef.current = osc;
+            if (waveform === 'white-noise' || waveform === 'pink-noise') {
+                // Noise Generation
+                const bufferSize = audioContextRef.current.sampleRate * 2; // 2 seconds buffer
+                const buffer = audioContextRef.current.createBuffer(1, bufferSize, audioContextRef.current.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                if (waveform === 'white-noise') {
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                } else {
+                    // Pink Noise (Approximation)
+                    let b0, b1, b2, b3, b4, b5, b6;
+                    b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+                    for (let i = 0; i < bufferSize; i++) {
+                        const white = Math.random() * 2 - 1;
+                        b0 = 0.99886 * b0 + white * 0.0555179;
+                        b1 = 0.99332 * b1 + white * 0.0750759;
+                        b2 = 0.96900 * b2 + white * 0.1538520;
+                        b3 = 0.86650 * b3 + white * 0.3104856;
+                        b4 = 0.55000 * b4 + white * 0.5329522;
+                        b5 = -0.7616 * b5 - white * 0.0168981;
+                        data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                        data[i] *= 0.11; // (roughly) compensate for gain
+                        b6 = white * 0.115926;
+                    }
+                }
+
+                const noise = audioContextRef.current.createBufferSource();
+                noise.buffer = buffer;
+                noise.loop = true;
+                noise.connect(gainNodeRef.current);
+                noise.start();
+                oscillatorRef.current = noise; // Storing noise source in oscillatorRef for convenience
+
+            } else {
+                // Oscillator
+                const osc = audioContextRef.current.createOscillator();
+                osc.type = waveform;
+                osc.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+                osc.connect(gainNodeRef.current);
+                osc.start();
+                oscillatorRef.current = osc;
+            }
+
         } else {
             if (oscillatorRef.current) {
                 try { oscillatorRef.current.stop(); } catch (e) { }
                 oscillatorRef.current = null;
             }
         }
-    }, [isSynthPlaying, waveform]);
+    }, [isSynthPlaying, waveform, frequency]); // Added frequency to dependency for initial start, though tone update is separate
 
     // Live Frequency Update
     useEffect(() => {
-        if (oscillatorRef.current && isSynthPlaying) {
+        if (oscillatorRef.current && isSynthPlaying && oscillatorRef.current.frequency) {
             oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
         }
     }, [frequency, isSynthPlaying]);
@@ -416,9 +456,8 @@ const AudioPlayer = ({
 
             {/* Card 2: Animation (Bottom Left, beneath Stave Input) */}
             <DraggableCard
-                title="Stave Animation"
                 initialPos={{ x: '16px', y: '512px' }}
-                initialSize={{ width: '1030px', height: 'calc(100% - 522px)' }}
+                initialSize={{ width: '1030px', height: '350px' }}
                 className="stave-animation-card"
             >
                 <div style={{
