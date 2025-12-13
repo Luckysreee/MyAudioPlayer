@@ -1,16 +1,21 @@
 import React, { useRef } from 'react';
 
 const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClearAll, translations }) => {
-    const dragItem = useRef(null);
-    const dragOverItem = useRef(null);
 
-    const handleSort = () => {
-        let _files = [...files];
-        const draggedItemContent = _files.splice(dragItem.current, 1)[0];
-        _files.splice(dragOverItem.current, 0, draggedItemContent);
-        dragItem.current = null;
-        dragOverItem.current = null;
-        onReorder(_files);
+    const moveUp = (index, e) => {
+        e.stopPropagation();
+        if (index === 0) return;
+        const newFiles = [...files];
+        [newFiles[index - 1], newFiles[index]] = [newFiles[index], newFiles[index - 1]];
+        onReorder(newFiles);
+    };
+
+    const moveDown = (index, e) => {
+        e.stopPropagation();
+        if (index === files.length - 1) return;
+        const newFiles = [...files];
+        [newFiles[index + 1], newFiles[index]] = [newFiles[index], newFiles[index + 1]];
+        onReorder(newFiles);
     };
 
     return (
@@ -33,32 +38,40 @@ const Playlist = ({ files, currentFileIndex, onPlay, onReorder, onDelete, onClea
                     <div
                         key={`${file.name}-${index}`}
                         className={`playlist-item ${index === currentFileIndex ? 'active' : ''}`}
-                        draggable
-                        onDragStart={(e) => {
-                            dragItem.current = index;
-                            e.target.classList.add('dragging');
-                        }}
-                        onDragEnter={(e) => (dragOverItem.current = index)}
-                        onDragEnd={(e) => {
-                            e.target.classList.remove('dragging');
-                            handleSort();
-                        }}
-                        onDragOver={(e) => e.preventDefault()}
                     >
-                        <div onClick={() => onPlay(index)} style={{ flex: 1 }}>
-                            <span>{index + 1}. {file.name}</span>
+                        <div onClick={() => onPlay(index)} style={{ flex: 1, display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                            <span style={{ marginRight: '8px', fontSize: '0.8rem', opacity: 0.7 }}>{index + 1}.</span>
+                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{file.name}</span>
                         </div>
 
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(index);
-                            }}
-                            style={{ marginLeft: '1rem', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid #666' }}
-                            aria-label="Delete"
-                        >
-                            ❌
-                        </button>
+                        <div className="flex-center gap-sm">
+                            <button
+                                onClick={(e) => moveUp(index, e)}
+                                disabled={index === 0}
+                                style={{ padding: '2px', background: 'transparent', border: 'none', cursor: index === 0 ? 'default' : 'pointer', opacity: index === 0 ? 0.3 : 1 }}
+                                title="Move Up"
+                            >
+                                ▲
+                            </button>
+                            <button
+                                onClick={(e) => moveDown(index, e)}
+                                disabled={index === files.length - 1}
+                                style={{ padding: '2px', background: 'transparent', border: 'none', cursor: index === files.length - 1 ? 'default' : 'pointer', opacity: index === files.length - 1 ? 0.3 : 1 }}
+                                title="Move Down"
+                            >
+                                ▼
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete(index);
+                                }}
+                                style={{ marginLeft: '0.5rem', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid #666' }}
+                                aria-label="Delete"
+                            >
+                                ❌
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>

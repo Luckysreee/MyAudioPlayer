@@ -84,6 +84,25 @@ function App() {
         });
     };
 
+    const handleReorderPlaylist = (index, direction) => {
+        const newFiles = [...files];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+        if (targetIndex < 0 || targetIndex >= newFiles.length) return;
+
+        // Swap items
+        [newFiles[index], newFiles[targetIndex]] = [newFiles[targetIndex], newFiles[index]];
+
+        // Update current file index if needed
+        if (currentFileIndex === index) {
+            setCurrentFileIndex(targetIndex);
+        } else if (currentFileIndex === targetIndex) {
+            setCurrentFileIndex(index);
+        }
+
+        setFiles(newFiles);
+    };
+
     // Layout: Header -> Content -> Footer
     return (
         <div className="app-container">
@@ -177,6 +196,7 @@ function App() {
                         dragHandlers={{ onDrop: handleDrop, onDragOver: (e) => e.preventDefault() }}
                         onUploadClick={triggerFileUpload}
                         onReorder={handleReorder}
+                        onReorderPlaylist={handleReorderPlaylist}
                     />
                 </div>
             </main>

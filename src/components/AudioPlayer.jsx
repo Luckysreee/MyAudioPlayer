@@ -21,7 +21,8 @@ const AudioPlayer = ({
     handleClearAll,
     dragHandlers,
     onUploadClick,
-    onReorder
+    onReorder,
+    onReorderPlaylist
 }) => {
     const audioRef = useRef(null);
     const audioContextRef = useRef(null);
@@ -492,6 +493,7 @@ const AudioPlayer = ({
                 <MelodyTable
                     melody={melody}
                     onDelete={(id) => setMelody(melody.filter(n => n.id !== id))}
+                    onReorder={setMelody}
                     translations={translations}
                     currentNoteIndex={currentNoteIndex}
                 />

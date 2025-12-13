@@ -49,7 +49,22 @@ export const StaveControls = ({ onPlay, isPlaying, onClear, melody, translations
 );
 
 // 2. MELODY TABLE
-export const MelodyTable = ({ melody, onDelete, translations, currentNoteIndex = -1 }) => {
+export const MelodyTable = ({ melody, onDelete, onReorder, translations, currentNoteIndex = -1 }) => {
+
+    const moveUp = (index) => {
+        if (index === 0) return;
+        const newMelody = [...melody];
+        [newMelody[index - 1], newMelody[index]] = [newMelody[index], newMelody[index - 1]];
+        onReorder(newMelody);
+    };
+
+    const moveDown = (index) => {
+        if (index === melody.length - 1) return;
+        const newMelody = [...melody];
+        [newMelody[index + 1], newMelody[index]] = [newMelody[index], newMelody[index + 1]];
+        onReorder(newMelody);
+    };
+
     return (
         <div className="melody-table" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             {melody.length === 0 ? <p style={{ fontStyle: 'italic', opacity: 0.4, textAlign: 'center', padding: '1rem' }}>{translations.empty || "No notes added"}</p> : (
@@ -60,7 +75,7 @@ export const MelodyTable = ({ melody, onDelete, translations, currentNoteIndex =
                                 <th style={{ padding: '8px', textAlign: 'left' }}>Note</th>
                                 <th style={{ padding: '8px', textAlign: 'left' }}>Octave</th>
                                 <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
-                                <th></th>
+                                <th style={{ padding: '8px', textAlign: 'center' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,7 +92,37 @@ export const MelodyTable = ({ melody, onDelete, translations, currentNoteIndex =
                                     <td style={{ padding: '8px' }}>{m.note}{m.accidental}</td>
                                     <td style={{ padding: '8px' }}>{m.octave}</td>
                                     <td style={{ padding: '8px' }}>{m.duration}s</td>
-                                    <td style={{ textAlign: 'center', padding: '8px' }}>
+                                    <td style={{ textAlign: 'center', padding: '8px', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={() => moveUp(idx)}
+                                            disabled={idx === 0}
+                                            style={{
+                                                padding: '2px 6px',
+                                                fontSize: '0.8rem',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                cursor: idx === 0 ? 'default' : 'pointer',
+                                                opacity: idx === 0 ? 0.3 : 1
+                                            }}
+                                            title="Move Up"
+                                        >
+                                            ▲
+                                        </button>
+                                        <button
+                                            onClick={() => moveDown(idx)}
+                                            disabled={idx === melody.length - 1}
+                                            style={{
+                                                padding: '2px 6px',
+                                                fontSize: '0.8rem',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                cursor: idx === melody.length - 1 ? 'default' : 'pointer',
+                                                opacity: idx === melody.length - 1 ? 0.3 : 1
+                                            }}
+                                            title="Move Down"
+                                        >
+                                            ▼
+                                        </button>
                                         <button
                                             onClick={() => onDelete(m.id)}
                                             style={{ padding: '4px 8px', fontSize: '0.8rem', background: 'transparent', color: 'var(--error-color)', border: 'none', cursor: 'pointer' }}
