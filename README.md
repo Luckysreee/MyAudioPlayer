@@ -1,10 +1,5 @@
 # Audio Studio (Hybrid Audio Workstation)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18-blue)
-![Vite](https://img.shields.io/badge/Vite-4-purple)
-![Status](https://img.shields.io/badge/status-active-success.svg)
-
 A comprehensive web-based audio studio that combines file playback, real-time synthesis, and melody composition. Built with React and the Web Audio API, it features a completely modular, draggable interface designed for accessibility and creativity.
 
 ## Table of Contents
@@ -19,8 +14,6 @@ A comprehensive web-based audio studio that combines file playback, real-time sy
 - [Project Structure](#project-structure)
 - [Technologies Used](#technologies-used)
 - [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 ---
 
@@ -31,18 +24,18 @@ A comprehensive web-based audio studio that combines file playback, real-time sy
 * **Layout Reset**: Quickly restore the default layout with a single click.
 * **Responsive Design**: Adapts to different screen sizes with a clean, grid-based architecture.
 
-### 🎵 1. Audio Player Mode
+### 1. Audio Player Mode
 * **Complete Playback Control**: Play, pause, stop, seek, and **Loop** tracks.
 * **Smart Playlist**: Drag and drop files to upload. Reorder tracks, remove items, and clear the list.
 * **Auto-Advance**: The player automatically advances to the next track or stops at the end of the playlist.
 * **Loop Mode**: Seamlessly repeat your favorite tracks.
 
-### 🎹 2. Synthesizer Mode
+### 2. Synthesizer Mode
 * **Real-time Generation**: Generate tones using standard waveforms (Sine, Square, Sawtooth, Triangle) and Noise types (White, Pink).
 * **Interactive Visuals**: Includes 3D-style canvas animations (Ground, Bridge) that react to the synth's state.
 * **Frequency Control**: Fine-tune the oscillator frequency for precise sound design.
 
-### 🎼 3. Stave Input Mode (Melody Creator)
+### 3. Stave Input Mode (Melody Creator)
 * **Visual Composition**: Create melodies by adding notes to a virtual stave.
 * **Multiple Input Methods**:
     * **Piano**: Click keys on a virtual piano (supports full octaves).
@@ -51,14 +44,14 @@ A comprehensive web-based audio studio that combines file playback, real-time sy
 * **Melody Table**: Reorder, edit, and delete notes in a structured table view.
 * **Playback**: Listen to your composition synthesized instantly.
 
-### 🌍 Multilingual Support
+### Multilingual Support
 The interface supports four languages with instant switching:
 * **English**
 * **Spanish** (Español)
 * **French** (Français)
 * **Swahili** (Kiswahili)
 
-### ♿ Accessibility and Theming
+### Accessibility and Theming
 * **High-Contrast Mode**: Enhanced visibility for accessibility.
 * **Zoom Controls**: Adjust interface scaling from 50% to 150%.
 * **Theme Support**: Switch between Dark (Default) and Light themes.
@@ -175,18 +168,6 @@ Contributions are welcome!
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
-
----
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## Contact
-
-Project Link: [https://github.com/Luckysreee/MyAudioPlayer](https://github.com/Luckysreee/MyAudioPlayer)
 
 ---
 
