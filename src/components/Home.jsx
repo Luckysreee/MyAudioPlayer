@@ -12,20 +12,8 @@ const Home = ({ onNavigate }) => {
             color: 'var(--text-color)',
             position: 'relative',
             overflow: 'hidden',
-            background: 'var(--bg-color)'
+            // background: handled by .app-content
         }}>
-            {/* Background Gradient Animation */}
-            <div style={{
-                position: 'absolute',
-                top: '-50%',
-                left: '-50%',
-                width: '200%',
-                height: '200%',
-                background: 'var(--home-bg-gradient)',
-                animation: 'pulseBg 10s infinite alternate',
-                zIndex: 0
-            }}></div>
-
             {/* Content */}
             <div style={{ zIndex: 1, textAlign: 'center', padding: '2rem' }}>
                 <h1 style={{
@@ -106,12 +94,7 @@ const Home = ({ onNavigate }) => {
                 </button>
             </div>
 
-            <style>{`
-                @keyframes pulseBg {
-                    0% { transform: scale(1); opacity: 0.8; }
-                    100% { transform: scale(1.1); opacity: 1; }
-                }
-            `}</style>
+
         </div>
     );
 };

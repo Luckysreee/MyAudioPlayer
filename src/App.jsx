@@ -186,7 +186,9 @@ function App() {
                     width: '100%',
                     height: '100%',
                     transform: `scale(${zoomLevel / 100})`,
-                    transformOrigin: 'top left'
+                    transformOrigin: 'top left',
+                    // Background moved to parent .app-content in CSS, or applied here to fill?
+                    // If applied here, it shrinks. Use CSS on parent.
                 }}>
                     {mode === 'home' ? (
                         <Home onNavigate={setMode} />
@@ -215,7 +217,7 @@ function App() {
                 </div>
             </main>
 
-            <Footer />
+            <Footer currentPageName={mode.charAt(0).toUpperCase() + mode.slice(1)} />
         </div>
     );
 }
